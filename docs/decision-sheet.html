@@ -1,0 +1,746 @@
+<!doctype html>
+<!-- Interactive copy of docs/OPEN_DECISIONS.md: open it in a browser, pick answers, copy them into Claude Code.
+     OPEN_DECISIONS.md is the source of truth; this page is a convenience and can be deleted once the decisions are made. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Bursa Tales Decision Sheet</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Caveat:wght@600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<style>
+/* Layout: one school test sheet on squared notebook paper ("kratka"). Decisions are numbered questions whose A/B/C answers get circled; recommendations are marked in red pen. Light theme = the bursa, dark theme = the bursa in hell. */
+:root {
+  --paper: #f6f5ee;
+  --grid: #dde4ee;
+  --glow: rgba(199, 54, 44, 0);
+  --card: #fffffd;
+  --ink: #1e2b5c;
+  --ink-2: #4f5a84;
+  --rule: #cdd5e1;
+  --red: #c4352b;
+  --red-wash: #fbe8e3;
+  --agree: #2c7549;
+  --agree-wash: #e3f2e8;
+  --differ: #9a520c;
+  --differ-wash: #fbeedc;
+  --shadow: 0 1px 0 rgba(30, 43, 92, .05), 0 8px 20px -16px rgba(30, 43, 92, .45);
+  --display: "Barlow Condensed", "Arial Narrow", "Roboto Condensed", sans-serif;
+  --body: "IBM Plex Sans", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --hand: "Caveat", "Segoe Print", "Bradley Hand", cursive;
+  --mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #1a1016;
+    --grid: #2b1822;
+    --glow: rgba(255, 98, 64, .16);
+    --card: #22151d;
+    --ink: #f0e5dd;
+    --ink-2: #c2aca5;
+    --rule: #432838;
+    --red: #ff6a4d;
+    --red-wash: #3b1917;
+    --agree: #71cf98;
+    --agree-wash: #15301f;
+    --differ: #f2a65a;
+    --differ-wash: #392513;
+    --shadow: 0 1px 0 rgba(0, 0, 0, .35), 0 12px 26px -16px rgba(0, 0, 0, .85);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #1a1016;
+  --grid: #2b1822;
+  --glow: rgba(255, 98, 64, .16);
+  --card: #22151d;
+  --ink: #f0e5dd;
+  --ink-2: #c2aca5;
+  --rule: #432838;
+  --red: #ff6a4d;
+  --red-wash: #3b1917;
+  --agree: #71cf98;
+  --agree-wash: #15301f;
+  --differ: #f2a65a;
+  --differ-wash: #392513;
+  --shadow: 0 1px 0 rgba(0, 0, 0, .35), 0 12px 26px -16px rgba(0, 0, 0, .85);
+  color-scheme: dark;
+}
+
+html { background: var(--paper); }
+body {
+  background-color: var(--paper);
+  background-image:
+    radial-gradient(ellipse 90% 420px at 50% 0, var(--glow), transparent 70%),
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 100% 100%, 22px 22px, 22px 22px;
+  background-repeat: no-repeat, repeat, repeat;
+  color: var(--ink);
+  font: 400 15.5px/1.55 var(--body);
+  -webkit-font-smoothing: antialiased;
+}
+.sheet {
+  max-width: 800px;
+  margin: 0 auto;
+  padding-inline: 16px;
+  padding-block: 32px 128px;
+  display: grid;
+  gap: 40px;
+}
+h1, h2, h3, h4 { font-family: var(--display); text-wrap: balance; margin: 0; line-height: 1.05; }
+h1 { font-size: clamp(2.6rem, 9vw, 4.2rem); font-weight: 700; text-transform: uppercase; letter-spacing: .01em; }
+h2 { font-size: 1.9rem; font-weight: 700; text-transform: uppercase; letter-spacing: .02em; }
+h3 { font-size: 1.35rem; font-weight: 700; letter-spacing: .01em; }
+h4 { font-size: 1.3rem; font-weight: 600; }
+p { margin: 0; }
+a { color: inherit; text-underline-offset: 3px; }
+a:focus-visible, button:focus-visible, summary:focus-visible, textarea:focus-visible {
+  outline: 3px solid var(--red); outline-offset: 2px; border-radius: 4px;
+}
+.hand { font-family: var(--hand); color: var(--red); font-weight: 700; }
+.mono { font-family: var(--mono); }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* Header */
+.head { display: grid; gap: 14px; }
+.eyebrow { font: 500 .78rem/1.3 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--ink-2); }
+.title-row { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 4px 18px; }
+.scrawl { font: 700 1.55rem/1.1 var(--hand); color: var(--red); transform: rotate(-3deg); padding-bottom: 6px; }
+.lede { max-width: 62ch; font-size: 1.05rem; }
+.who { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; padding-top: 4px; }
+.who-label { font: 500 .78rem var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2); margin-right: 4px; }
+.chip { position: relative; display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border: 1.5px solid var(--rule); border-radius: 999px; background: var(--card); cursor: pointer; font-weight: 500; }
+.chip input { position: absolute; opacity: 0; pointer-events: none; }
+.chip.is-on { border-color: var(--ink); background: var(--ink); color: var(--paper); }
+.chip:has(input:focus-visible) { outline: 3px solid var(--red); outline-offset: 2px; }
+
+/* Generic blocks */
+.block { display: grid; gap: 16px; }
+.block > header { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 14px; border-bottom: 2px solid var(--ink); padding-bottom: 6px; }
+.ref { font: 500 .8rem var(--mono); color: var(--ink-2); letter-spacing: .06em; text-transform: uppercase; }
+.paper { background: var(--card); border: 1px solid var(--rule); border-radius: 12px; padding: 18px 20px; box-shadow: var(--shadow); }
+.paper p + p { margin-top: 10px; }
+.summary p { font-size: 1.06rem; max-width: 68ch; }
+
+.tiers { display: grid; grid-template-columns: repeat(auto-fit, minmax(215px, 1fr)); gap: 12px; }
+.tier { display: grid; align-content: start; gap: 8px; }
+.tier h3 small { display: block; font: 500 .8rem var(--mono); letter-spacing: .06em; color: var(--ink-2); text-transform: uppercase; margin-top: 4px; }
+ul.tight { margin: 0; padding-left: 1.1em; display: grid; gap: 5px; }
+ul.tight li::marker { color: var(--red); }
+.two { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; }
+.no h3 { color: var(--red); }
+.note { color: var(--ink-2); max-width: 68ch; }
+
+.issues { display: grid; gap: 12px; }
+.issues ol, .issues ul { margin: 0; padding-left: 1.3em; display: grid; gap: 8px; }
+.issues li { min-width: 0; }
+.to { font: 600 .8rem var(--mono); white-space: nowrap; }
+.to a { color: var(--red); }
+
+/* Decisions */
+.group { display: grid; gap: 14px; }
+.group-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; }
+.group-head p { color: var(--ink-2); font-size: .95rem; }
+.q { background: var(--card); border: 1px solid var(--rule); border-radius: 12px; padding: 16px 18px 14px; box-shadow: var(--shadow); display: grid; gap: 10px; scroll-margin-top: 16px; }
+.q.is-changed { border-color: var(--ink); }
+.q-head { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; }
+.qid { font: 600 .85rem var(--mono); color: var(--paper); background: var(--ink); border-radius: 6px; padding: 2px 7px; }
+.tag { font: 500 .72rem var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2); border: 1px dashed var(--ink-2); border-radius: 999px; padding: 1px 8px; }
+.src { font-size: .88rem; color: var(--ink-2); }
+.opts { display: grid; gap: 8px; }
+.opt { position: relative; display: grid; grid-template-columns: 2.2rem minmax(0, 1fr); gap: 12px; align-items: start; padding: 10px 12px; border: 1px solid var(--rule); border-radius: 10px; cursor: pointer; transition: border-color .15s, background-color .15s; }
+.opt:hover { border-color: var(--ink-2); }
+.opt input { position: absolute; opacity: 0; width: 1px; height: 1px; pointer-events: none; }
+.letter { width: 2.2rem; height: 2.2rem; display: grid; place-items: center; font: 600 1rem var(--mono); color: var(--ink-2); border: 1.5px dashed var(--rule); border-radius: 50%; transition: transform .15s; }
+.opt.is-picked { border-color: var(--ink); background: color-mix(in srgb, var(--card) 88%, var(--ink)); }
+.opt.is-picked .letter { color: var(--red); border: 2.5px solid var(--red); border-radius: 46% 54% 50% 50% / 55% 45% 55% 45%; transform: rotate(-9deg); }
+.opt:has(input:focus-visible) { outline: 3px solid var(--red); outline-offset: 2px; }
+.opt-text { min-width: 0; padding-top: 4px; }
+.rec { display: block; font: 700 1.2rem/1 var(--hand); color: var(--red); margin-bottom: 3px; }
+.why { font-size: .93rem; }
+.why .hand { font-size: 1.15rem; margin-right: 4px; }
+details.note-box summary { cursor: pointer; font-size: .88rem; color: var(--ink-2); width: max-content; max-width: 100%; }
+details.note-box[open] summary { margin-bottom: 6px; }
+textarea {
+  width: 100%; box-sizing: border-box; resize: vertical; font: 400 .95rem/1.45 var(--body);
+  color: var(--ink); background: var(--paper); border: 1px solid var(--rule); border-radius: 8px; padding: 8px 10px;
+}
+textarea::placeholder { color: var(--ink-2); opacity: .8; }
+.cmp { font: 600 .78rem var(--mono); border-radius: 999px; padding: 2px 9px; margin-left: auto; }
+.cmp.agree { color: var(--agree); background: var(--agree-wash); }
+.cmp.differ { color: var(--differ); background: var(--differ-wash); }
+
+/* Questions + answers */
+.qa { display: grid; gap: 14px; }
+.qa label { display: grid; gap: 6px; font-weight: 500; }
+.qa .qid { justify-self: start; }
+.out { font: 400 .86rem/1.5 var(--mono); background: var(--card); min-height: 11em; }
+.row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.btn { font: 600 .95rem var(--body); color: var(--paper); background: var(--ink); border: 1.5px solid var(--ink); border-radius: 999px; padding: 8px 16px; cursor: pointer; }
+.btn:hover { background: var(--red); border-color: var(--red); }
+.btn.ghost { background: transparent; color: var(--ink); }
+.btn.ghost:hover { color: var(--red); border-color: var(--red); background: transparent; }
+.btn.small { padding: 6px 13px; font-size: .9rem; }
+.status { font-size: .9rem; color: var(--ink-2); min-height: 1.4em; }
+.cmp-summary { font-size: .95rem; }
+.cmp-summary b { color: var(--differ); }
+
+/* Dock */
+.dock {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 5;
+  padding: 10px 16px calc(10px + env(safe-area-inset-bottom, 0px));
+  background: color-mix(in srgb, var(--paper) 90%, transparent);
+  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+  border-top: 1px solid var(--rule);
+}
+.dock-in { max-width: 800px; margin: 0 auto; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; }
+.dock-text { flex: 1 1 160px; min-width: 0; font-size: .92rem; }
+.dock-text b { font-family: var(--mono); font-weight: 600; }
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; }
+  .opt.is-picked .letter, .scrawl { transform: none; }
+}
+@media (max-width: 480px) {
+  .paper, .q { padding: 14px; }
+  .opt { grid-template-columns: 2rem minmax(0, 1fr); gap: 10px; padding: 9px 10px; }
+  .letter { width: 2rem; height: 2rem; }
+  .dock .btn.ghost { display: none; }
+}
+</style>
+<style>body { margin: 0; } [hidden] { display: none !important; } img { max-width: 100%; }</style>
+</head>
+<body>
+<main class="sheet">
+  <header class="head">
+    <p class="eyebrow">Bursa Tales · design brief review · step 1 of 4</p>
+    <div class="title-row">
+      <h1>Decision sheet</h1>
+      <p class="scrawl" aria-hidden="true">23 questions, ★ = Claude’s pick</p>
+    </div>
+    <p class="lede">Claude’s review of your design brief. The recommended answers are already circled, so change only what you disagree with, add notes where you like, and copy your answers into the Claude Code session. You can each fill in your own copy of this page and compare them at the bottom.</p>
+    <div class="who" id="who" role="radiogroup" aria-label="Who is answering">
+      <span class="who-label">Answering as</span>
+      <label class="chip"><input type="radio" name="who" id="who-p1" value="Player 1 (macOS)">Player 1 · macOS</label>
+      <label class="chip"><input type="radio" name="who" id="who-p2" value="Player 2 (Windows)">Player 2 · Windows</label>
+      <label class="chip is-on"><input type="radio" name="who" id="who-both" value="both of us" checked>Both of us</label>
+    </div>
+  </header>
+
+  <section class="block summary" aria-labelledby="h-summary">
+    <header><h2 id="h-summary">The game</h2><span class="ref">One paragraph</span></header>
+    <div class="paper">
+      <p><b>Bursa Tales</b> is a co-op first-person shooter with survival, base-building and tower-defense elements, for up to 8 players on a persistent dedicated server you run yourselves. A mysterious event has teleported your old high-school bursa on Okopowa Street in Warsaw into a psychedelic hell. You play its former residents: you fight demons Doom-style with a growing arsenal of weird weapons, gather resources and craft better gear, fortify the bursa and hold it against demon attacks, and find your old dorm-mates, now NPCs who give quests, until you are strong enough to kill the boss and escape. It should feel tense, psychedelic and creative, look low-poly and stylized (Schedule I rather than realistic), run on Windows and macOS, and leave voice chat to Discord. The first version is deliberately tiny: the bursa map, players, demons, weapons and shooting, all in multiplayer. Crafting, building, tower defense, NPCs, quests, story and skills come later.</p>
+    </div>
+  </section>
+
+  <section class="block" aria-labelledby="h-real">
+    <header><h2 id="h-real">What’s realistic</h2><span class="ref">Your Section 9 question</span></header>
+    <p class="note">You have 2 × 8 hours a week, about 16 hours together, or 65–70 hours a month. First-game estimates usually run two to three times over, so every step below is small and ends with something you can play.</p>
+    <div class="tiers">
+      <article class="paper tier">
+        <h3>v0.1<small>About 6–8 weeks</small></h3>
+        <ul class="tight">
+          <li>2–8 players on your own dedicated server</li>
+          <li>Graybox bursa: ground floor, a corridor, the courtyard</li>
+          <li>Two weapons against waves of one demon type</li>
+          <li>Health, death, respawn, a wave counter</li>
+          <li>“A few weekends” is the optimistic end</li>
+        </ul>
+      </article>
+      <article class="paper tier">
+        <h3>Next<small>About 6 months</small></h3>
+        <ul class="tight">
+          <li>Call of Duty Zombies loop: demon currency and a mystery vending machine</li>
+          <li>Barricades and turrets (tower defense lite)</li>
+          <li>4–6 weapons, 3–4 demon types, a first boss</li>
+          <li>World saves on a VPS with automatic builds</li>
+        </ul>
+      </article>
+      <article class="paper tier">
+        <h3>Later<small>About 12 months</small></h3>
+        <ul class="tight">
+          <li>Simple crafting and free-placement base building that persists</li>
+          <li>A few NPC friends with simple quests</li>
+          <li>Sanity with psychedelic effects</li>
+          <li>A second zone: the streets around the bursa, or the mall</li>
+        </ul>
+      </article>
+    </div>
+    <div class="two">
+      <article class="paper tier no">
+        <h3>Not realistic for a first game</h3>
+        <ul class="tight">
+          <li>Writing your own engine or physics</li>
+          <li>Factorio-style automation, RimWorld-style NPC lives, true RTS unit control: each is a whole game</li>
+          <li>A detailed replica of Okopowa and Arkadia; build a compressed, stylized version</li>
+          <li>Hundreds of networked demons at once; plan for 20–50</li>
+          <li>Fair competitive PvP, anti-cheat, accounts, matchmaking, a Steam release</li>
+          <li>Making all 3D art and animation yourselves, or a story with cutscenes and voice acting</li>
+        </ul>
+      </article>
+      <article class="paper tier">
+        <h3>Biggest risks</h3>
+        <ul class="tight">
+          <li><b>Scope.</b> The brief touches about ten genres. Add one new system per milestone, and only once the current build is fun.</li>
+          <li><b>The multiplayer tax.</b> Every feature costs more over the network. Building it in from day one, as you plan, is still cheaper than adding it later.</li>
+          <li><b>Motivation.</b> Projects on 8-hour weeks die in long stretches with nothing playable, so every milestone ends with the two of you playing.</li>
+          <li><b>The physics/network split.</b> Player movement belongs to both of you, so CLAUDE.md will define the interface between your areas.</li>
+        </ul>
+      </article>
+    </div>
+  </section>
+
+  <section class="block" aria-labelledby="h-issues">
+    <header><h2 id="h-issues">Contradictions and gaps</h2><span class="ref">Each one links to the decision that resolves it</span></header>
+    <div class="two issues">
+      <article class="paper">
+        <h3>Contradictions</h3>
+        <ol>
+          <li>“RTS” (1.2, 0.3) vs 3D first person (4.2). <span class="to"><a href="#D2">D2</a></span></li>
+          <li>6.1 says “flat world” and “craft”; 6.2 says “bursa map” and 6.3 puts crafting later. <span class="to"><a href="#D6">D6</a></span></li>
+          <li>“Co-op” in the pitch (1.2) vs “both, opt-in PvP” (5.2). <span class="to"><a href="#D4">D4</a></span></li>
+          <li>Persistent world (5.4), roguelike elements (0.3) and “kill the boss to escape” (1.2, 2.2): what happens to the world after the boss? <span class="to"><a href="#D3">D3</a></span></li>
+          <li>The core loop (3.1–3.3) and the first 5 minutes (3.4) are built entirely from “later” features, so v0.1 tests none of them. 3.1 also leaves out moving, aiming and shooting, which is all of v0.1. <span class="to"><a href="#D6">D6</a></span></li>
+          <li>Art: Schedule I (clean low-poly) vs Doom and Boltgun (gritty retro) vs “psychedelic”. <span class="to"><a href="#D8">D8</a></span></li>
+          <li>8.4 says to keep “this file” updated, but step 2 makes DESIGN.md the agreed design. <span class="to"><a href="#D21">D21</a></span></li>
+          <li>8.2 gives Player 1 the “game engine”, but with an existing engine there is no engine to write. <span class="to"><a href="#D13">D13</a> <a href="#D17">D17</a></span></li>
+        </ol>
+      </article>
+      <article class="paper">
+        <h3>Gaps</h3>
+        <ul>
+          <li>Blank or partial: 0.2 for Player 2, 0.3 (one line each instead of three), 0.5 (one combination), 1.4 (no “but Z”). <span class="to"><a href="#Q1">Q1</a> <a href="#D1">D1</a></span></li>
+          <li>Mentioned but missing from the 6.3 “later” list: automation, NPCs with their own lives (2.1), survival needs and the boss (2.2), farming, loot boxes and grinding (0.3), PvP (5.2), persistence (5.4). DESIGN.md will keep them in a backlog.</li>
+          <li>Never defined: survival needs, death, the world while everyone is offline, recognizing returning players without accounts, the netcode model, where the server runs. <span class="to"><a href="#D10">D10</a> <a href="#D5">D5</a> <a href="#D11">D11</a> <a href="#D16">D16</a> <a href="#D14">D14</a> <a href="#D15">D15</a></span></li>
+          <li>Audio is never mentioned, yet in a Doom-like game sound carries half the tension. <span class="to"><a href="#D17">D17</a></span></li>
+          <li>8.2 leaves gameplay, AI, level design, art, audio, UI and story without an owner, so “the owner decides” (8.5) cannot settle them. <span class="to"><a href="#D17">D17</a> <a href="#D18">D18</a></span></li>
+          <li>8.1 gives hours but no shared time, while the definition of done needs the other person to play every change. <span class="to"><a href="#D19">D19</a></span></li>
+          <li>6.4 lists only monetization; 8.3 has no branch naming, merge style, CI or plan for large binary files. <span class="to"><a href="#D22">D22</a> <a href="#D20">D20</a></span></li>
+          <li>Controls are not mentioned. Assumed: keyboard and mouse only, gamepad later.</li>
+          <li>The 4.4 link is a very long Google Images URL. DESIGN.md will describe the style in words; a few reference screenshots in the repo would help.</li>
+        </ul>
+      </article>
+    </div>
+  </section>
+
+  <section class="block" aria-labelledby="h-dec">
+    <header><h2 id="h-dec">Decisions</h2><span class="ref">★ = Claude’s recommendation, already selected</span></header>
+    <div class="group" id="g-design">
+      <div class="group-head"><h3>Game design · D1–D12</h3><p>D10–D12 are for later versions. They don’t change v0.1, but DESIGN.md will record a provisional answer.</p></div>
+    </div>
+    <div class="group" id="g-tech">
+      <div class="group-head"><h3>Tech · D13–D16</h3></div>
+    </div>
+    <div class="group" id="g-team">
+      <div class="group-head"><h3>Team and workflow · D17–D23</h3></div>
+    </div>
+  </section>
+
+  <section class="block" aria-labelledby="h-q">
+    <header><h2 id="h-q">Only you can answer</h2><span class="ref">Q1–Q4</span></header>
+    <div class="paper qa" id="questions"></div>
+  </section>
+
+  <section class="block" id="send" aria-labelledby="h-send">
+    <header><h2 id="h-send">Send your answers</h2><span class="ref">Paste into Claude Code</span></header>
+    <div class="paper qa">
+      <label for="out">Your answers, ready to paste
+        <textarea id="out" class="out" readonly rows="11"></textarea>
+      </label>
+      <div class="row">
+        <button type="button" class="btn" id="copy">Copy answers</button>
+        <button type="button" class="btn ghost" id="reset">Reset to recommendations</button>
+        <span class="status" id="copy-status" role="status"></span>
+      </div>
+    </div>
+    <div class="paper qa">
+      <h3>Compare with the other sheet</h3>
+      <label for="other">If you each filled in your own sheet, paste the other person’s copied answers here. Every decision where you differ gets flagged, so you can settle those on Discord first.
+        <textarea id="other" rows="5" placeholder="Bursa Tales decision sheet: answers from Player 2 (Windows)&#10;D1=A D2=A D3=A …"></textarea>
+      </label>
+      <p class="cmp-summary" id="cmp-summary" role="status">Nothing to compare yet.</p>
+    </div>
+  </section>
+</main>
+
+<div class="dock" role="region" aria-label="Answer status">
+  <div class="dock-in">
+    <p class="dock-text" id="dock-text">All 23 decisions are on Claude’s recommendation.</p>
+    <a class="btn small ghost" href="#send">Review</a>
+    <button type="button" class="btn small" id="copy2">Copy answers</button>
+  </div>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  var GROUPS = ["design", "tech", "team"];
+
+  var DECISIONS = [
+    { id: "D1", g: "design", t: "One-line pitch", src: "1.4 lists references but has no “but Z”.",
+      o: [["A", "Rust meets Doom, but you defend your Polish high-school dorm in hell, and your old roommates give the quests."],
+          ["B", "Call of Duty Zombies meets Don’t Starve, in a Warsaw bursa teleported to hell."],
+          ["C", "Deep Rock Galactic meets Orcs Must Die!, in a psychedelic Polish hell."]],
+      rec: "A", why: "It names your two strongest references and the one thing only your game has: the bursa, with your real friends as NPCs." },
+    { id: "D2", g: "design", t: "What “RTS” means in a first-person game", src: "1.2 and 0.3 say RTS; 4.2 says 3D first person.",
+      o: [["A", "Build and defend in first person: you place barricades, turrets and traps yourself (Orcs Must Die!, Sanctum, Rust). No unit commanding."],
+          ["B", "First person plus an optional top-down planning map for placing defenses."],
+          ["C", "Real RTS: give orders to squads of NPC friends (RimWorld-style)."]],
+      rec: "A", why: "An RTS camera and an FPS camera are two games’ worth of controls and UI. A keeps the tower-defense fun, and B can be added on top of it later." },
+    { id: "D3", g: "design", t: "What happens after the boss", src: "5.4 persistent world vs 0.3 roguelike vs 1.2 escape.",
+      o: [["A", "Semesters: the world persists between sessions until you kill the boss and escape. Then a new semester starts in a fresh, harder hell, and light progress carries over (rescued friends, cosmetics)."],
+          ["B", "One endless world (Valheim, Minecraft): a boss kill unlocks the next zone and nothing resets."],
+          ["C", "Session runs (Deep Rock Galactic, Risk of Rain): every session is a new run and only unlocks persist."]],
+      rec: "A", why: "You get persistence, a roguelike reset and a real ending, and resets keep save files small. It does not affect v0.1." },
+    { id: "D4", g: "design", t: "Co-op or PvP", src: "1.2 says co-op; 5.2 says both.",
+      o: [["A", "Co-op only for now. Friendly fire is a server setting, off by default. Opt-in PvP (duels in the bursa gym) later."],
+          ["B", "Co-op with friendly fire on from day one, for pranks and chaos."],
+          ["C", "Full PvP, including raiding each other’s bases (Rust)."]],
+      rec: "A", why: "Fair PvP needs lag compensation and balancing. A friendly-fire switch gives you the pranks for about an hour of work." },
+    { id: "D5", g: "design", t: "What happens when you die", src: "Not in the brief.",
+      o: [["A", "Respawn at the bursa after about 5 seconds and keep everything. Later: drop your demon currency where you died and run back for it."],
+          ["B", "Drop your whole inventory at your body (the Rust and Valheim corpse run)."],
+          ["C", "Roguelike permadeath: the character resets and only unlocks stay."]],
+      rec: "A", why: "In v0.1 there is nothing to lose anyway. The later currency drop adds tension without rage-quits." },
+    { id: "D6", g: "design", t: "What v0.1 is", src: "6.1 says flat world and crafting; 6.2 says bursa map; 6.3 puts crafting later.",
+      o: [["A", "Wave survival in the bursa, like Call of Duty Zombies: demons pour out of a portal in growing waves and you survive as long as you can. First 5 minutes: type the server address and a nickname, spawn in the dorm common room, grab a gun, the first wave breaks in, die, respawn."],
+          ["B", "Free roam: demons wander the map and you explore and hunt them (Rust, Tibia)."],
+          ["C", "Exactly what 6.1 says: a flat test world with walking, shooting and basic crafting."]],
+      rec: "A", why: "It is the smallest version with tension and a goal: surviving the night (Player 1), hordes and tower defense (Player 2). Waves are also the seed of the tower-defense loop." },
+    { id: "D7", g: "design", t: "How big v0.1 is", src: "6.2 lists features without sizes.",
+      o: [["A", "A graybox (untextured blocks) of the bursa ground floor, one dorm corridor and the courtyard. Two hitscan weapons (pistol, shotgun). One demon type in two variants (fast and weak, slow and tanky). One spawn portal. A HUD with health, ammo and wave number."],
+          ["B", "Bigger: the whole building, three weapons including a rocket or plasma launcher, two demon types (melee and ranged)."],
+          ["C", "Smaller: a flat arena, one weapon, one demon."]],
+      rec: "A", why: "Enough variety for 15 minutes of laughs. Weapons and demons will be defined as data, so adding more is cheap. Projectiles and ranged demons add network work, so they move to v0.2." },
+    { id: "D8", g: "design", t: "Art style", src: "4.4 Schedule I vs 1.4 Doom and Boltgun vs 1.3 psychedelic.",
+      o: [["A", "Low-poly and stylized like Schedule I, built from free CC0 packs (Kenney, Quaternius, Poly Pizza, Mixamo animations), plus a hell color palette and a psychedelic post-processing shader."],
+          ["B", "Retro boomer shooter (Boltgun, Dusk): low-poly with pixelated textures and low-resolution rendering. Demons could even be 2D sprites like in Doom, with no 3D animation."],
+          ["C", "Voxels (MagicaVoxel): easy to make your own models, simple animation."]],
+      rec: "A", why: "Free assets exist in bulk, and the psychedelic hell comes from color and shaders you can tune any time. B’s pixel filter can be layered on top of A later. 4.4’s “if realistic” is read as “realistically achievable”, since 0.4 rules out realistic graphics." },
+    { id: "D9", g: "design", t: "Tone", src: "1.3 “tense” vs Player 2’s “freaking weird shit”.",
+      o: [["A", "Doom tone: tense, fast combat in a weird, psychedelic world, with the humor in the details (dorm signs, your NPC friends, Polish food as power-ups)."],
+          ["B", "Serious horror: dark, slow and scary."],
+          ["C", "Full comedy: absurd from start to finish."]],
+      rec: "A", why: "It matches “tense, psychedelic, creative” and leaves room for your inside jokes." },
+    { id: "D10", g: "design", later: true, t: "Survival needs", src: "2.2 says “survival with needs” but never names them.",
+      o: [["A", "Sanity first: it drops in darkness and near demons and recovers in the bursa. Low sanity means psychedelic screen effects and fake demons. Add hunger only if it adds fun."],
+          ["B", "Hunger and thirst (the Rust classic)."],
+          ["C", "Health, hunger and sanity (Don’t Starve)."]],
+      rec: "A", why: "It turns “psychedelic” into a mechanic and fits hell better than a thirst meter." },
+    { id: "D11", g: "design", later: true, t: "The world while nobody is online", src: "5.4 persistent world.",
+      o: [["A", "It pauses: the server saves and idles, and nothing attacks an empty base."],
+          ["B", "It keeps running, and demons can raid the base while you are offline (Rust)."],
+          ["C", "It keeps running, but the base cannot be damaged while everyone is offline."]],
+      rec: "A", why: "In co-op, logging in to a wrecked base is just frustrating. A paused world is also the simplest to build." },
+    { id: "D12", g: "design", later: true, t: "Loot boxes and grinding", src: "0.3. In-game currency only, since 6.4 bans monetization.",
+      o: [["A", "A mystery vending machine in the bursa: spend demon currency on a random weapon or upgrade (like the Mystery Box in Call of Duty Zombies)."],
+          ["B", "Random drops with rarity tiers from demons and chests (Tibia, Diablo)."],
+          ["C", "Both from the start."]],
+      rec: "A", why: "One machine is a few hours of work and big laughs. Add B once there are enough weapons for rarity to matter." },
+    { id: "D13", g: "tech", t: "Engine and language", src: "7.1 and 7.2: “Claude please recommend”.",
+      o: [["A", "Godot 4 with statically typed GDScript. Free (MIT), small download, native on Apple Silicon and Windows, exports to Windows, macOS and Linux, runs headless as a dedicated server, built-in UDP multiplayer. Scenes are text files that git and Claude Code handle well, and CI needs no license. Downsides: fewer FPS tutorials and assets than Unity, and client prediction and lag compensation are do-it-yourself (or the netfox add-on)."],
+          ["B", "Unity 6 with C#. The most tutorials and assets, several netcode libraries (Netcode for GameObjects, FishNet, Mirror), a dedicated-server build target. Downsides: a multi-gigabyte editor, license sign-in (in CI too), and YAML scenes that merge badly and that Claude Code cannot edit reliably."],
+          ["C", "TypeScript with Three.js and a Node.js server. Everything is code, it runs in a browser (share a link, nothing to install), and the server side is classic devops (Docker, TLS, WebSockets). Downsides: no editor, so the map is built in Blender and you write engine basics yourselves, and WebSockets run over TCP."]],
+      rec: "A", why: "The best fit for two hobbyists on macOS and Windows with a headless Linux server, a $10 budget and AI-assisted coding. Not recommended: Unreal (huge install, binary Blueprints, weaker on macOS) and Bevy (no mature editor, breaking changes every release)." },
+    { id: "D14", g: "tech", t: "How the game stays in sync over the network", src: "Not in the brief; Player 2’s area.",
+      o: [["A", "Hybrid: each client moves its own player (instant, no prediction code). The server owns demons, health, damage and waves. The shooter’s client detects hits, and the server checks and applies them."],
+          ["B", "Full server authority from day one: client-side prediction, reconciliation and lag compensation, as in competitive shooters (for example with netfox)."],
+          ["C", "A listen server (one player hosts) for v0.1, a dedicated server later."]],
+      rec: "A", why: "The fastest route to fun, and cheating does not matter between friends. B becomes a later “netcode 2.0” milestone for Player 2. In Godot the same project runs as a dedicated server or a listen host, so C stays available as a free dev shortcut." },
+    { id: "D15", g: "tech", t: "Where the server runs", src: "5.3 dedicated server; 7.4 budget of $10.",
+      o: [["A", "Local first: a headless server on one laptop, played over the internet through Tailscale (free, no port forwarding). Then a Linux VPS with Docker for about €4–6 a month once v0.1 runs."],
+          ["B", "A free cloud tier (for example Oracle Cloud Always Free): €0, but sign-up and capacity hassles, and ARM builds."],
+          ["C", "A home machine (an old PC or a Raspberry Pi) with router port forwarding."]],
+      rec: "A", why: "No cost while you build, and the VPS, Docker and CI/CD pipeline is exactly the devops Player 2 wants to learn." },
+    { id: "D16", g: "tech", later: true, t: "Recognizing returning players", src: "5.4 needs it, but accounts are a classic “no”.",
+      o: [["A", "No accounts: a nickname plus a random secret token created on first launch and stored on your computer. The server keys saves by token."],
+          ["B", "Log in with Discord (OAuth)."],
+          ["C", "Nickname only; anyone can type any name."]],
+      rec: "A", why: "Persistence without building accounts. v0.1 can use C, since nothing is saved yet." },
+    { id: "D17", g: "team", t: "Who owns what", src: "8.2 covers only physics/engine and networking/server.",
+      o: [["A", "Player 1 (macOS), client and feel: player movement and physics, weapons and shooting feel, demon behavior and animation, the bursa map, visuals and psychedelic effects, HUD, audio. Player 2 (Windows), server and world: netcode, dedicated server, game rules on the server (waves, spawning, damage, score), saving, builds, CI/CD, deployment, main menu and connect flow. Shared: story, NPCs, quests, balance."],
+          ["B", "By feature: each of you owns whole features end to end (for example Player 1 weapons including their networking, Player 2 demons including AI and sync), and the layer owner reviews."],
+          ["C", "Exactly as written in 8.2, with everything else decided per issue."]],
+      rec: "A", why: "Every area gets an owner, so 8.5 works, and Player 2 gets gameplay too (waves, rules), not just plumbing. With an existing engine there is no engine to write, so Player 1’s engine work becomes the gameplay systems." },
+    { id: "D18", g: "team", t: "Tie-breaker for shared areas", src: "8.5 only covers owned areas.",
+      o: [["A", "Each of you writes a preference in the GitHub issue. If you still disagree after one discussion, pick the cheaper or more reversible option and log it in DESIGN.md."],
+          ["B", "Take turns breaking ties, logged."],
+          ["C", "Coin flip."]],
+      rec: "A", why: "It keeps disagreements short and leaves a record for future Claude Code sessions." },
+    { id: "D19", g: "team", t: "When you play together", src: "8.1 gives hours but no shared time; the definition of done needs the other person to play.",
+      o: [["A", "One fixed weekly playtest on Discord (for example Sunday evening, 45 minutes), plus ad hoc sessions when you are both online."],
+          ["B", "Fully async: the PR author posts a short clip and the reviewer plays when free."],
+          ["C", "Two fixed sessions a week."]],
+      rec: "A", why: "A fixed slot guarantees “the other person played it”, and every playtest automatically tests the other operating system." },
+    { id: "D20", g: "team", t: "Git details", src: "8.3 sets the rules but not the details.",
+      o: [["A", "Branches named name/issue-number-short-slug, Conventional Commits (feat:, fix:), squash-merged PRs, a protected main (PR, one approval, green CI), GitHub Actions for lint, format check, tests and export builds, Git LFS for models, textures and audio, and a PR template with “how to test”."],
+          ["B", "Minimal: free-form commits, merge commits, no CI or LFS until v0.2."]],
+      rec: "A", why: "CI is what enforces “main always runs” and “no new warnings” automatically, and it is Player 2’s devops playground." },
+    { id: "D21", g: "team", t: "One source of truth", src: "8.4 says to update “this file”, but step 2 creates DESIGN.md.",
+      o: [["A", "DESIGN.md is the living design, with a decision log. GAME_DESIGN_PROMPT.md stays frozen as the original brief. CLAUDE.md holds tech and conventions, ROADMAP.md the milestones, GitHub issues the tasks."],
+          ["B", "Keep updating GAME_DESIGN_PROMPT.md as 8.4 says, with DESIGN.md mirroring it."]],
+      rec: "A", why: "Two design documents drift apart. One document per purpose keeps both Claude Code sessions in sync." },
+    { id: "D22", g: "team", t: "Hard “no” list", src: "6.4 lists only monetization.",
+      o: [["A", "Also rule out, for now: accounts and logins, matchmaking or a server browser, mod support, anti-cheat, in-game voice chat (you have Discord), procedural generation, writing your own engine or physics, realistic graphics, and a Steam, console or mobile release."],
+          ["B", "Keep only monetization and decide the rest case by case."]],
+      rec: "A", why: "Each item is a project of its own. Writing them down stops future sessions from drifting into them." },
+    { id: "D23", g: "team", t: "Language", src: "Not in the brief.",
+      o: [["A", "Code, comments, docs, commits and issues in English. In-game text in English with Polish flavor (signs, names, slang, food), kept in a translation table so a Polish version is cheap later."],
+          ["B", "English code, Polish in-game text."],
+          ["C", "Polish everywhere."]],
+      rec: "A", why: "English code and docs work best with tools and Claude Code, and the translation table keeps a Polish version one step away." }
+  ];
+
+  var QUESTIONS = [
+    { id: "Q1", t: "Player 2: what do you like doing together in games? (0.2 is blank)", ph: "Guess from your picks: fighting side by side against hordes and building defenses. Right?" },
+    { id: "Q2", t: "Which of you is jlagun on GitHub, and what is the other person’s GitHub username?", ph: "For example: jlagun is Player 1 (macOS); Player 2 is @…" },
+    { id: "Q3", t: "Optional: can you share a sketch or photos of the real bursa layout?", ph: "Ground floor, one dorm corridor, the courtyard. The graybox map will follow it." },
+    { id: "Q4", t: "Once you approve the roadmap, should Claude create the GitHub issues and milestones and assign them?", ph: "Yes or no" }
+  ];
+
+  var KEY = "bursa-tales-decision-sheet-v1";
+  var state = { who: "both of us", picks: {}, notes: {}, answers: {}, other: "" };
+  DECISIONS.forEach(function (d) { state.picks[d.id] = d.rec; });
+
+  function el(tag, attrs) {
+    var n = document.createElement(tag);
+    if (attrs) {
+      Object.keys(attrs).forEach(function (k) {
+        var v = attrs[k];
+        if (v === null || v === undefined || v === false) return;
+        if (k === "class") n.className = v;
+        else if (k === "text") n.textContent = v;
+        else n.setAttribute(k, v === true ? "" : v);
+      });
+    }
+    for (var i = 2; i < arguments.length; i++) {
+      var c = arguments[i];
+      if (c !== null && c !== undefined) n.append(c);
+    }
+    return n;
+  }
+
+  function build() {
+    GROUPS.forEach(function (g) {
+      var host = document.getElementById("g-" + g);
+      DECISIONS.filter(function (d) { return d.g === g; }).forEach(function (d) {
+        var opts = el("div", { class: "opts", role: "radiogroup", "aria-labelledby": d.id + "-t" });
+        d.o.forEach(function (pair) {
+          var letter = pair[0], id = d.id + "-" + letter;
+          var input = el("input", { type: "radio", name: d.id, value: letter, id: id, checked: letter === d.rec });
+          input.addEventListener("change", function () {
+            if (input.checked) { state.picks[d.id] = letter; update(); }
+          });
+          var text = el("span", { class: "opt-text" },
+            letter === d.rec ? el("span", { class: "rec", text: "★ recommended" }) : null,
+            pair[1]);
+          opts.append(el("label", { class: "opt" + (letter === d.rec ? " is-picked" : ""), for: id },
+            input, el("span", { class: "letter", "aria-hidden": "true", text: letter }), text));
+        });
+        var note = el("textarea", { id: d.id + "-note", rows: "2", placeholder: "Anything to add or change about " + d.id + "?" });
+        note.addEventListener("input", function () { state.notes[d.id] = note.value; update(); });
+        var card = el("article", { class: "q", id: d.id },
+          el("div", { class: "q-head" },
+            el("span", { class: "qid", text: d.id }),
+            el("h4", { id: d.id + "-t", text: d.t }),
+            d.later ? el("span", { class: "tag", text: "Later" }) : null,
+            el("span", { class: "cmp", id: d.id + "-cmp", hidden: true })),
+          el("p", { class: "src", text: "Brief: " + d.src }),
+          opts,
+          el("p", { class: "why" }, el("span", { class: "hand", text: "Why " + d.rec + ":" }), d.why),
+          el("details", { class: "note-box", id: d.id + "-details" },
+            el("summary", { text: "Add a note" }), note));
+        host.append(card);
+      });
+    });
+
+    var qhost = document.getElementById("questions");
+    QUESTIONS.forEach(function (q) {
+      var ta = el("textarea", { id: q.id + "-a", rows: "2", placeholder: q.ph });
+      ta.addEventListener("input", function () { state.answers[q.id] = ta.value; update(); });
+      qhost.append(el("label", { for: q.id + "-a", id: q.id }, el("span", { class: "qid", text: q.id }), q.t, ta));
+    });
+  }
+
+  function clean(s) { return String(s || "").trim().replace(/\s+/g, " "); }
+
+  function changed() { return DECISIONS.filter(function (d) { return state.picks[d.id] !== d.rec; }); }
+
+  function outputText() {
+    var fmt = function (d) { return d.id + "=" + state.picks[d.id] + (state.picks[d.id] !== d.rec ? "*" : ""); };
+    var lines = ["Bursa Tales decision sheet: answers from " + state.who];
+    lines.push(DECISIONS.slice(0, 12).map(fmt).join(" "));
+    lines.push(DECISIONS.slice(12).map(fmt).join(" "));
+    var ch = changed();
+    lines.push(ch.length
+      ? "* = changed from Claude’s recommendation: " + ch.map(function (d) { return d.id + " " + d.rec + "→" + state.picks[d.id]; }).join(", ")
+      : "All picks match Claude’s recommendations.");
+    var notes = DECISIONS.filter(function (d) { return clean(state.notes[d.id]); });
+    if (notes.length) {
+      lines.push("", "Notes:");
+      notes.forEach(function (d) { lines.push(d.id + " note: " + clean(state.notes[d.id])); });
+    }
+    var qs = QUESTIONS.filter(function (q) { return clean(state.answers[q.id]); });
+    if (qs.length) {
+      lines.push("", "Answers:");
+      qs.forEach(function (q) { lines.push(q.id + " answer: " + clean(state.answers[q.id])); });
+    }
+    return lines.join("\n");
+  }
+
+  function parseOther(txt) {
+    var picks = {}, re = /\bD(\d{1,2})\s*[=:]\s*([ABC])(?![A-Za-z])/gi, m;
+    while ((m = re.exec(txt))) {
+      var id = "D" + parseInt(m[1], 10);
+      if (!(id in picks)) picks[id] = m[2].toUpperCase();
+    }
+    var who = /answers from ([^\n]+)/i.exec(txt);
+    return { picks: picks, who: who ? who[1].trim() : "Other sheet" };
+  }
+
+  function update() {
+    DECISIONS.forEach(function (d) {
+      var card = document.getElementById(d.id);
+      if (!card) return;
+      card.querySelectorAll(".opt").forEach(function (lab) {
+        var inp = lab.querySelector("input");
+        lab.classList.toggle("is-picked", inp.checked);
+      });
+      card.classList.toggle("is-changed", state.picks[d.id] !== d.rec);
+    });
+    document.querySelectorAll("#who .chip").forEach(function (c) {
+      c.classList.toggle("is-on", c.querySelector("input").checked);
+    });
+
+    document.getElementById("out").value = outputText();
+
+    var other = parseOther(state.other || "");
+    var ids = Object.keys(other.picks);
+    var diffs = [];
+    DECISIONS.forEach(function (d) {
+      var chip = document.getElementById(d.id + "-cmp");
+      var theirs = other.picks[d.id];
+      if (!theirs) { chip.hidden = true; return; }
+      var same = theirs === state.picks[d.id];
+      chip.hidden = false;
+      chip.className = "cmp " + (same ? "agree" : "differ");
+      chip.textContent = other.who + ": " + theirs + (same ? " · same" : " · differs");
+      if (!same) diffs.push(d);
+    });
+    var sum = document.getElementById("cmp-summary");
+    sum.textContent = "";
+    if (!ids.length) {
+      sum.textContent = state.other && state.other.trim() ? "No answers found in the pasted text. It should contain lines like D1=A D2=B." : "Nothing to compare yet.";
+    } else if (!diffs.length) {
+      sum.textContent = "You agree on all " + ids.length + " decisions found in the other sheet.";
+    } else {
+      sum.append("You agree on " + (ids.length - diffs.length) + " of " + ids.length + ". Talk about: ");
+      diffs.forEach(function (d, i) {
+        var a = el("a", { href: "#" + d.id }, el("b", { text: d.id }));
+        sum.append(a, " (you " + state.picks[d.id] + ", " + other.who + " " + other.picks[d.id] + ")" + (i < diffs.length - 1 ? ", " : "."));
+      });
+    }
+
+    var ch = changed();
+    var dock = document.getElementById("dock-text");
+    dock.textContent = "";
+    if (ch.length) {
+      dock.append(el("b", { text: String(ch.length) }), " of 23 changed from Claude’s recommendation");
+    } else {
+      dock.append("All 23 decisions are on Claude’s recommendation");
+    }
+    if (ids.length) dock.append(" · ", el("b", { text: String(diffs.length) }), " differ from the other sheet");
+    dock.append(".");
+
+    try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) { /* storage unavailable: page still works */ }
+  }
+
+  function merge(saved) {
+    if (!saved || typeof saved !== "object") return;
+    if (typeof saved.who === "string") state.who = saved.who;
+    ["picks", "notes", "answers"].forEach(function (k) {
+      var src = saved[k];
+      if (!src || typeof src !== "object") return;
+      Object.keys(src).forEach(function (id) { if (typeof src[id] === "string") state[k][id] = src[id]; });
+    });
+    DECISIONS.forEach(function (d) {
+      if (!d.o.some(function (p) { return p[0] === state.picks[d.id]; })) state.picks[d.id] = d.rec;
+    });
+    if (typeof saved.other === "string") state.other = saved.other;
+  }
+
+  function syncInputs() {
+    DECISIONS.forEach(function (d) {
+      var inp = document.getElementById(d.id + "-" + state.picks[d.id]);
+      if (inp) inp.checked = true;
+      var note = document.getElementById(d.id + "-note");
+      note.value = state.notes[d.id] || "";
+      if (note.value.trim()) document.getElementById(d.id + "-details").open = true;
+    });
+    QUESTIONS.forEach(function (q) { document.getElementById(q.id + "-a").value = state.answers[q.id] || ""; });
+    document.querySelectorAll("#who input").forEach(function (i) { i.checked = i.value === state.who; });
+    document.getElementById("other").value = state.other || "";
+  }
+
+  function copy(btn) {
+    var text = outputText();
+    var status = document.getElementById("copy-status");
+    var fallback = function () {
+      var ta = document.getElementById("out");
+      document.getElementById("send").scrollIntoView({ block: "start" });
+      ta.focus(); ta.select();
+      status.textContent = "Copying is blocked here. The text is selected: press Ctrl+C or Cmd+C.";
+    };
+    try {
+      navigator.clipboard.writeText(text).then(function () {
+        var old = btn.textContent;
+        btn.textContent = "Copied";
+        status.textContent = "Copied. Paste it into the Claude Code session.";
+        setTimeout(function () { btn.textContent = old; }, 1800);
+      }, fallback);
+    } catch (e) { fallback(); }
+  }
+
+  build();
+
+  document.querySelectorAll("#who input").forEach(function (i) {
+    i.addEventListener("change", function () { if (i.checked) { state.who = i.value; update(); } });
+  });
+  document.getElementById("other").addEventListener("input", function (e) { state.other = e.target.value; update(); });
+  document.getElementById("copy").addEventListener("click", function (e) { copy(e.currentTarget); });
+  document.getElementById("copy2").addEventListener("click", function (e) { copy(e.currentTarget); });
+
+  var resetArmed = null;
+  document.getElementById("reset").addEventListener("click", function (e) {
+    var btn = e.currentTarget;
+    if (!resetArmed) {
+      btn.textContent = "Click again to reset all picks";
+      resetArmed = setTimeout(function () { resetArmed = null; btn.textContent = "Reset to recommendations"; }, 4000);
+      return;
+    }
+    clearTimeout(resetArmed); resetArmed = null;
+    btn.textContent = "Reset to recommendations";
+    DECISIONS.forEach(function (d) { state.picks[d.id] = d.rec; });
+    syncInputs(); update();
+    document.getElementById("copy-status").textContent = "All picks are back on the recommendations. Notes and answers were kept.";
+  });
+
+  function start(data) {
+    var saved = data && data.picks ? data : null;
+    if (!saved) { try { saved = JSON.parse(localStorage.getItem(KEY) || "null"); } catch (e) { saved = null; } }
+    merge(saved);
+    syncInputs();
+    update();
+  }
+
+  try { if (window.claude && window.claude.hot && window.claude.hot.snapshot) window.claude.hot.snapshot(function () { return JSON.parse(JSON.stringify(state)); }); } catch (e) { /* no hot reload outside the viewer */ }
+  var hot = window.claude && window.claude.hot;
+  if (hot && hot.ready) hot.ready(start); else start((hot && hot.data) || {});
+})();
+</script>
+</body>
+</html>
