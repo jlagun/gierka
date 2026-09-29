@@ -51,6 +51,7 @@ Claude Code reads this file at the start of every session, on both machines. Kee
   - Every third-party asset is listed in `game/assets/CREDITS.md`.
   - The repository is public, so only commit assets whose license allows sharing them. CC0 is always fine. Check Mixamo's terms before committing Mixamo files.
   - Binary assets under `game/assets/` go through Git LFS.
+- **Claude Code cloud sessions** (claude.ai/code): a SessionStart hook, `.claude/hooks/session-start.sh`, installs Godot and gdtoolkit when a cloud session starts. That lets the session run the smoke test and the linters. On your own machines the hook does nothing. When you upgrade Godot, change the version in that script too.
 
 ## Project structure
 
@@ -145,7 +146,7 @@ Player movement belongs to both owners, so this section is how their code fits t
 
 - **`main` always runs, and nobody pushes to it directly.** Every change goes through a pull request. The repository is public, so GitHub can enforce this: `main` requires a pull request with one approval, and passing CI once CI exists (M1.7).
 - **The repository is public, so never commit secrets.** That includes tokens, SSH keys, passwords, Tailscale auth keys and the VPS address. CI secrets go in GitHub Actions secrets.
-- **One issue per task, with one assignee.** Name the branch after the issue: `<github-username>/<issue-number>-<short-slug>`, for example `jlagun/12-shotgun` or `bionosal/7-dedicated-server`.
+- **One issue per task, with one assignee.** Name the branch after the issue: `<github-username>/<issue-number>-<short-slug>`, for example `jlagun/12-shotgun` or `bionosal/7-dedicated-server`. The exception is Claude Code cloud sessions: they work on an auto-named `claude/…` branch, which is fine, because the PR's `Closes #<issue>` links it to the issue.
 - **Small PRs, reviewed by the other person, squash-merged.** Each PR becomes one commit on `main`.
 - **Commit messages follow Conventional Commits:**
   - prefixes: `feat:`, `fix:`, `docs:`, `refactor:`, `test:`, `chore:`, `ci:`
