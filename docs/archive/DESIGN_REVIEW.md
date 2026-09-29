@@ -1,8 +1,8 @@
 # Bursa Tales: design review
 
-> **Status, 2026-09-28:** step 1 of 4 is done. We're waiting for both players to answer [OPEN_DECISIONS.md](OPEN_DECISIONS.md). No code has been written yet.
+> **Archived on 2026-09-29.** Step 1 is finished, and both players accepted every recommendation. The agreed design is now in [DESIGN.md](../DESIGN.md), and the milestones are in [ROADMAP.md](../ROADMAP.md). This file is kept as a record of the review. Don't edit it.
 >
-> Claude Code wrote this review from the original brief, [GAME_DESIGN_PROMPT.md](GAME_DESIGN_PROMPT.md). Section numbers like 1.2 or 6.1 refer to that brief.
+> Claude Code wrote this review from the original brief, [GAME_DESIGN_PROMPT.md](../GAME_DESIGN_PROMPT.md). Section numbers like 1.2 or 6.1 refer to that brief.
 
 ## The process
 

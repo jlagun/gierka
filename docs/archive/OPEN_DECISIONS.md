@@ -1,58 +1,43 @@
 # Bursa Tales: open decisions
 
-> **Status, 2026-09-28:** open, waiting for Player 1 and Player 2. The reasoning behind these decisions is in [DESIGN_REVIEW.md](DESIGN_REVIEW.md).
+> **Decided on 2026-09-29.** Both players picked A (★) for all 23 decisions. The results are recorded in the decision log of [DESIGN.md](../DESIGN.md). This file is kept as a record of the options you considered. Don't edit it.
 >
-> ★ marks Claude's recommendation. D10–D12 and D16 are for later versions. They don't change v0.1, but DESIGN.md will record a provisional answer for them.
-
-## How to answer
-
-Use whichever of these is easiest:
-
-- **Edit the tables below.** Put A, B or C in your column for each decision, and write your answers to Q1–Q4. Add a note to any decision if you like.
-- **Tell Claude Code.** Start a session in this repo and give your answers, for example `D4 B, D8 B, rest ★`, plus answers to Q1–Q4. Claude will fill in the tables.
-- **Use the interactive sheet.** Open [decision-sheet.html](decision-sheet.html) in a browser: clone the repo, or download the file, and double-click it.
-  - Claude's recommendations are pre-selected.
-  - The copy button gives you a block of text to paste into Claude Code.
-  - It can also compare two people's answers.
-
-  It is only a convenience copy; this file is the source of truth.
-
-If the two of you disagree on something, leave the "Final" column empty until you settle it. How you break ties is itself a decision (D18).
+> The reasoning behind the options is in [DESIGN_REVIEW.md](DESIGN_REVIEW.md).
 
 ## Answer table
 
 | # | Decision | ★ | Player 1 | Player 2 | Final |
 |---|---|---|---|---|---|
-| D1 | One-line pitch | A | | | |
-| D2 | What "RTS" means in a first-person game | A | | | |
-| D3 | What happens after the boss | A | | | |
-| D4 | Co-op or PvP | A | | | |
-| D5 | What happens when you die | A | | | |
-| D6 | What v0.1 is | A | | | |
-| D7 | How big v0.1 is | A | | | |
-| D8 | Art style | A | | | |
-| D9 | Tone | A | | | |
-| D10 | Survival needs (later) | A | | | |
-| D11 | The world while nobody is online (later) | A | | | |
-| D12 | Loot boxes and grinding (later) | A | | | |
-| D13 | Engine and language | A | | | |
-| D14 | How the game stays in sync over the network | A | | | |
-| D15 | Where the server runs | A | | | |
-| D16 | Recognizing returning players (later) | A | | | |
-| D17 | Who owns what | A | | | |
-| D18 | Tie-breaker for shared areas | A | | | |
-| D19 | When you play together | A | | | |
-| D20 | Git details | A | | | |
-| D21 | One source of truth | A | | | |
-| D22 | Hard "no" list | A | | | |
-| D23 | Language | A | | | |
+| D1 | One-line pitch | A | A | A | A |
+| D2 | What "RTS" means in a first-person game | A | A | A | A |
+| D3 | What happens after the boss | A | A | A | A |
+| D4 | Co-op or PvP | A | A | A | A |
+| D5 | What happens when you die | A | A | A | A |
+| D6 | What v0.1 is | A | A | A | A |
+| D7 | How big v0.1 is | A | A | A | A |
+| D8 | Art style | A | A | A | A |
+| D9 | Tone | A | A | A | A |
+| D10 | Survival needs (later) | A | A | A | A |
+| D11 | The world while nobody is online (later) | A | A | A | A |
+| D12 | Loot boxes and grinding (later) | A | A | A | A |
+| D13 | Engine and language | A | A | A | A |
+| D14 | How the game stays in sync over the network | A | A | A | A |
+| D15 | Where the server runs | A | A | A | A |
+| D16 | Recognizing returning players (later) | A | A | A | A |
+| D17 | Who owns what | A | A | A | A |
+| D18 | Tie-breaker for shared areas | A | A | A | A |
+| D19 | When you play together | A | A | A | A |
+| D20 | Git details | A | A | A | A |
+| D21 | One source of truth | A | A | A | A |
+| D22 | Hard "no" list | A | A | A | A |
+| D23 | Language | A | A | A | A |
 
 | # | Question only you can answer | Answer |
 |---|---|---|
-| Q1 | Player 2: what do you like doing together in games? (0.2 is blank) | |
-| Q2 | Which of you is `jlagun` on GitHub, and what is the other person's GitHub username? | |
-| Q3 | Optional: can you share a sketch or photos of the real bursa layout? | |
-| Q4 | Once you approve the roadmap, should Claude create the GitHub issues and milestones and assign them? | |
+| Q1 | Player 2: what do you like doing together in games? (0.2 is blank) | Player 1: fighting, gathering resources and exploring the world. Player 2: teamwork defeating enemies, and having silly fun while playing. |
+| Q2 | Which of you is `jlagun` on GitHub, and what is the other person's GitHub username? | jlagun is Player 1 (macOS); bionosal is Player 2 (Windows). |
+| Q3 | Optional: can you share a sketch or photos of the real bursa layout? | Yes. The ground-floor layout is in [reference/bursa-ground-floor.png](../reference/bursa-ground-floor.png). The upper floor has more rooms and is not drawn yet. |
+| Q4 | Once you approve the roadmap, should Claude create the GitHub issues and milestones and assign them? | Yes (both players). |
 
 ---
 
