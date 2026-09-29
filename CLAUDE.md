@@ -177,6 +177,7 @@ A task is done when all of these are true:
   - Run the tests and the headless smoke test (a server plus two clients).
   - Fix new warnings.
   - Follow the git workflow above.
+- **In a cloud session you can't open a window, so you can't playtest.** When a task is done, tell the player which branch to check out on their own machine and what to try. The definition of done needs someone to play it.
 - **Record changes where they belong:**
   - decisions go in the DESIGN.md decision log, using the next free D-number
   - conventions go in this file
