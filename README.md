@@ -21,7 +21,7 @@ Tell the scripts where Godot is, using the `GODOT` environment variable:
 
 ## Run it
 
-**From the editor:** open `game/project.godot` in Godot and press Play (F5). In the main menu:
+**From the editor:** open `game/project.godot` in Godot and click the Run Project button (▶, top right). The shortcut is F5 on Windows and Cmd+B on macOS. In the main menu:
 
 - **Host** starts a server on your computer and lets you play on it.
 - **Join** connects to someone else's server.
