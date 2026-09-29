@@ -35,7 +35,7 @@ Every feature should serve at least one of these. A feature that serves none of 
 - **The world outside** is hell: post-apocalyptic, abstract, "Warsaw, but in hell". The world is handmade and finite.
   - The first zone is the bursa and its yard.
   - Later zones are the upper floor, the streets around the bursa, and then the mall.
-- **The characters** are the players, who were residents of the bursa. Their old dorm-mates appear later as NPCs who give quests.
+- **The characters** are the players, who were residents of the bursa. Their old dorm-mates appear later as NPCs who give quests. The repository is public, so use their first names or nicknames, and ask them first.
 - **The ending** is killing the boss, which lets the players escape hell and ends the semester (see section 5).
 
 ## 4. Look, sound and tone
