@@ -1,5 +1,6 @@
 # Smoke test: starts a dedicated server and two bot clients, all without windows.
-# It passes when each bot has seen the other one move, and nobody logged an error.
+# It passes when each bot has seen the other one move, and nobody logged an error
+# or a warning.
 #
 # Usage: powershell -ExecutionPolicy Bypass -File tools\smoke_test.ps1
 # Uses the Godot executable in $env:GODOT, or `godot` from your PATH. On Windows,
@@ -24,8 +25,8 @@ function Start-Godot([string]$name, [string[]]$arguments) {
     return $process
 }
 
-function Show-Logs {
-    foreach ($name in 'server', 'bot_a', 'bot_b') {
+function Show-Logs([string[]]$names = @('server', 'bot_a', 'bot_b')) {
+    foreach ($name in $names) {
         foreach ($suffix in '.log', '.err.log') {
             $path = Join-Path $logs "$name$suffix"
             if (Test-Path $path) {
@@ -40,7 +41,7 @@ Write-Host 'Importing the project...'
 $import = Start-Godot 'import' @('--import')
 $import.WaitForExit()
 if ($import.ExitCode -ne 0) {
-    Get-Content (Join-Path $logs 'import.log')
+    Show-Logs @('import')
     Write-Host 'Import failed.'
     exit 1
 }
@@ -74,10 +75,10 @@ try {
     }
 
     $logFiles = Get-ChildItem -Path $logs -Filter '*.log'
-    $errors = $logFiles | Select-String -Pattern 'SCRIPT ERROR', '^ERROR:'
+    $errors = $logFiles | Select-String -CaseSensitive -Pattern 'SCRIPT ERROR', '^ERROR:', '^WARNING:'
     if ($errors) {
         $errors | ForEach-Object { Write-Host $_ }
-        Write-Host 'Errors were logged (listed above).'
+        Write-Host 'Errors or warnings were logged (listed above).'
         $passed = $false
     }
 }

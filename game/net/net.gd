@@ -16,10 +16,22 @@ signal connection_failed
 signal server_disconnected
 
 const DEFAULT_PORT: int = 7777
-const MAX_CLIENTS: int = 8
+const MAX_PLAYERS: int = 8
 const MAX_NICKNAME_LENGTH: int = 16
 ## ENet alone can keep trying for half a minute; a mistyped address should fail sooner.
 const CONNECT_TIMEOUT_SECONDS: float = 10.0
+## Code point ranges dropped from nicknames: control characters, and invisible
+## characters that change how the text around them shows. For example, U+202E
+## would make a name read backwards.
+const HIDDEN_CHARACTER_RANGES: Array[Vector2i] = [
+	Vector2i(0x0000, 0x001F),  # control characters
+	Vector2i(0x007F, 0x009F),  # delete and more control characters
+	Vector2i(0x061C, 0x061C),  # Arabic letter mark
+	Vector2i(0x200B, 0x200F),  # zero-width characters, direction marks
+	Vector2i(0x2028, 0x202E),  # line and paragraph separators, direction overrides
+	Vector2i(0x2060, 0x206F),  # word joiner, direction isolates, other invisible characters
+	Vector2i(0xFEFF, 0xFEFF),  # zero-width no-break space
+]
 
 ## Peer id -> nickname. Only filled in on the server.
 var players: Dictionary[int, String] = {}
@@ -34,10 +46,12 @@ func _ready() -> void:
 	multiplayer.server_disconnected.connect(_on_server_disconnected)
 
 
-## Starts listening for players on the given UDP port.
-func start_server(port: int) -> Error:
+## Starts listening for players on the given UDP port. On a listen server the
+## host plays too, which leaves room for one client fewer.
+func start_server(port: int, dedicated: bool) -> Error:
+	var max_clients := MAX_PLAYERS if dedicated else MAX_PLAYERS - 1
 	var peer := ENetMultiplayerPeer.new()
-	var error := peer.create_server(port, MAX_CLIENTS)
+	var error := peer.create_server(port, max_clients)
 	if error != OK:
 		return error
 	multiplayer.multiplayer_peer = peer
@@ -71,13 +85,20 @@ func leave() -> void:
 ## Returns a nickname that is safe to show above a player's head.
 static func clean_nickname(nickname: String, peer_id: int) -> String:
 	var cleaned := ""
-	for character in nickname.strip_edges():
-		if character.unicode_at(0) >= 32:
+	for character in nickname:
+		if not _is_hidden_character(character.unicode_at(0)):
 			cleaned += character
-	cleaned = cleaned.left(MAX_NICKNAME_LENGTH).strip_edges()
+	cleaned = cleaned.strip_edges().left(MAX_NICKNAME_LENGTH).strip_edges()
 	if cleaned.is_empty():
 		cleaned = "Player %d" % peer_id
 	return cleaned
+
+
+static func _is_hidden_character(code: int) -> bool:
+	for hidden_range in HIDDEN_CHARACTER_RANGES:
+		if code >= hidden_range.x and code <= hidden_range.y:
+			return true
+	return false
 
 
 func _register(peer_id: int, nickname: String) -> void:

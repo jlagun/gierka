@@ -63,7 +63,7 @@ The first time a server starts, macOS or Windows may ask whether Godot can accep
 
 ## Smoke test
 
-The smoke test starts a dedicated server and two bot clients, without windows. It passes when each bot has seen the other one move. Run it before you push.
+The smoke test starts a dedicated server and two bot clients, without windows. It passes when each bot has seen the other one move, and nothing logged an error or a warning. Run it before you push.
 
 ## Documentation
 

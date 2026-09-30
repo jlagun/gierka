@@ -32,7 +32,7 @@ func _ready() -> void:
 func _start_server(port: int, dedicated: bool, nickname: String) -> void:
 	_close_menu()
 	_open_world()
-	var error := Net.start_server(port)
+	var error := Net.start_server(port, dedicated)
 	if error != OK:
 		_abort(tr("Could not start a server on port %d.") % port)
 		return

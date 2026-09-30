@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Smoke test: starts a dedicated server and two bot clients, all without windows.
-# It passes when each bot has seen the other one move, and nobody logged an error.
+# It passes when each bot has seen the other one move, and nobody logged an error
+# or a warning.
 #
 # Usage: tools/smoke_test.sh
 # Uses the Godot executable in $GODOT, or `godot` from your PATH.
@@ -51,8 +52,8 @@ status=0
 wait "$bot_a" || status=1
 wait "$bot_b" || status=1
 
-if grep -E "SCRIPT ERROR|^ERROR:" "$LOGS/import.log" "$LOGS/server.log" "$LOGS/bot_a.log" "$LOGS/bot_b.log"; then
-  echo "Errors were logged (listed above)."
+if grep -E "SCRIPT ERROR|^ERROR:|^WARNING:" "$LOGS/import.log" "$LOGS/server.log" "$LOGS/bot_a.log" "$LOGS/bot_b.log"; then
+  echo "Errors or warnings were logged (listed above)."
   status=1
 fi
 
