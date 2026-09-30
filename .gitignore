@@ -1,0 +1,9 @@
+# Godot's import cache and editor state; Godot rebuilds it from the project.
+.godot/
+
+# Exported builds
+/build/
+
+# OS clutter
+.DS_Store
+Thumbs.db

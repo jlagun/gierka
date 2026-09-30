@@ -55,7 +55,7 @@ Claude Code reads this file at the start of every session, on both machines. Kee
 
 ## Project structure
 
-This is the target layout. Milestone M0 creates it.
+This is the target layout. M0 created `main/`, `net/`, `player/`, `levels/`, `ui/`, `tests/`, `assets/` and `tools/`. The other folders appear with the first task that needs them.
 
 ```
 CLAUDE.md
@@ -82,19 +82,20 @@ tools/                 scripts to run a server and clients locally, and the smok
 
 ## Running the game
 
-The exact commands are set up in M0. Put your Godot executable in the `GODOT` environment variable, or on your `PATH` as `godot`:
+Put your Godot executable in the `GODOT` environment variable, or on your `PATH` as `godot`:
 
 - **macOS:** `/Applications/Godot.app/Contents/MacOS/Godot`
 - **Windows:** `Godot_v4.7.2-stable_win64_console.exe`. The console build prints output to the terminal.
 
-```
-$GODOT --path game                                   # client with the main menu
-$GODOT --headless --path game -- --server            # dedicated server (default port 7777)
-$GODOT --path game -- --connect 127.0.0.1 --name Kuba  # client that joins right away
-```
+| | macOS (bash) | Windows (PowerShell) |
+|---|---|---|
+| Game with the main menu | `tools/run_client.sh` | `tools\run_client.ps1` |
+| Dedicated server (UDP 7777) | `tools/run_server.sh` | `tools\run_server.ps1` |
+| Smoke test: a server and two bots | `tools/smoke_test.sh` | `tools\smoke_test.ps1` |
 
-In PowerShell on Windows, write `& $env:GODOT` instead of `$GODOT`.
-
+- **Running the PowerShell scripts:** Windows blocks scripts by default, so run them as `powershell -ExecutionPolicy Bypass -File tools\smoke_test.ps1`.
+- **Game options** come after `--`: `--server`, `--host`, `--connect <address>`, `--port <port>`, `--name <nickname>`, and `--bot` for the smoke test. For example, `$GODOT --headless --path game -- --server`. In PowerShell, write `& $env:GODOT` and quote the separator as `'--'`, or PowerShell may swallow it.
+- **A fresh clone must be imported once** before the game can start from the command line: `$GODOT --headless --path game --import`. The scripts do this for you, and so does opening the project in the editor.
 - **Several instances from the editor:** use Debug → Customize Run Instances.
 - **In a cloud session without Godot installed:** say so. Never claim the game runs without running it.
 
@@ -122,8 +123,8 @@ In PowerShell on Windows, write `& $env:GODOT` instead of `$GODOT`.
 
 - **Signals vs calls:** use signals for "something happened", and direct method calls for "do this".
 - **No magic numbers in gameplay code.** Tunable values are `@export` variables or live in `.tres` data.
-- **No new warnings.** Fix warnings rather than silencing them. If one really must be ignored, use `@warning_ignore` with a comment saying why.
-- **Player-facing text** goes through `tr()` with translation keys.
+- **No new warnings.** Fix warnings rather than silencing them. If one really must be ignored, use `@warning_ignore` with a comment saying why. The editor shows warnings in the script editor. On the command line, Godot only prints warnings that are set to Error, so a clean headless run doesn't prove there are none.
+- **Player-facing text** goes through `tr()`, with the English text itself as the key: `tr("Could not connect to the server.")`. Text typed into scenes is translated automatically. A Polish translation can be added later as a `.po` file, without code changes.
 - **Comments and language:** comments explain *why*, not *what*. Code, comments, commits, issues and docs are in English.
 - **Prefer Godot's built-in nodes** over custom systems: `NavigationAgent3D` for pathfinding, `AnimationTree` for animation, `MultiplayerSpawner` and `MultiplayerSynchronizer` for replication.
 
@@ -156,7 +157,7 @@ Player movement belongs to both owners, so this section is how their code fits t
 - **Git LFS:** run `git lfs install` once per machine. Binary files under `game/assets/` go through LFS (set up in `.gitattributes`).
 - **What to commit:**
   - Never commit `.godot/` or exported builds.
-  - Do commit the `*.import` files and `export_presets.cfg`.
+  - Do commit the `*.import` files, the `*.uid` files and `export_presets.cfg`.
 
 ## Definition of done
 
