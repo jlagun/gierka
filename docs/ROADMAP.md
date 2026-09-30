@@ -1,6 +1,6 @@
 # Bursa Tales: roadmap
 
-> **Status, 2026-09-29:** approved by jlagun and bionosal. Every task has a GitHub issue, and each task number below links to it. The issues are labeled with their milestone (`M0` to `M5`) and assigned to their owners. M0 is being built.
+> **Status, 2026-09-30:** approved by jlagun and bionosal. Every task has a GitHub issue, and each task number below links to it. The issues are labeled with their milestone (`M0` to `M5`) and assigned to their owners. M0 is done: you played it together over Tailscale, and the smoke test passes on both machines. M1 is next.
 >
 > Where v0.1 is headed is described in [DESIGN.md](DESIGN.md), section 7. Who owns what, and how to work, is in [CLAUDE.md](../CLAUDE.md).
 
@@ -161,7 +161,7 @@ This is a rough order. It gets planned in detail when v0.1 is done, using what y
 
 | Milestone | Status | Playtested |
 |---|---|---|
-| M0 Hello world | in progress | |
+| M0 Hello world | done | 2026-09-30 |
 | M1 Shooting together | not started | |
 | M2 Demons | not started | |
 | M3 The bursa | not started | |
