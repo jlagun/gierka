@@ -3,6 +3,10 @@ extends Node
 ## player in a circle and watches the other players. It quits with exit code 0
 ## once it has seen another player, with a nickname, move; with 1 if that
 ## doesn't happen in time.
+##
+## Bots leave one at a time, lowest peer id first. When two clients leave in
+## the same server frame, the server's notice to one about the other fails,
+## and Godot logs an error.
 
 const TIMEOUT_SECONDS: float = 30.0
 ## Keep walking for a while after passing, so the other bot can see us move too.
@@ -29,11 +33,15 @@ func _physics_process(delta: float) -> void:
 		else:
 			_watch(player)
 
-	if _passed_at >= 0.0 and _elapsed - _passed_at >= LINGER_SECONDS:
+	var lingered := _passed_at >= 0.0 and _elapsed - _passed_at >= LINGER_SECONDS
+	if lingered and _is_first_in_line():
 		print("SMOKE TEST PASSED")
 		_finish(0)
 	elif _elapsed >= TIMEOUT_SECONDS:
-		printerr("SMOKE TEST FAILED: saw no other player move within %d seconds" % TIMEOUT_SECONDS)
+		var reason := (
+			"saw no other player move" if _passed_at < 0.0 else "the bot before us didn't leave"
+		)
+		printerr("SMOKE TEST FAILED: %s within %d seconds" % [reason, TIMEOUT_SECONDS])
 		_finish(1)
 
 
@@ -46,6 +54,16 @@ func _watch(player: Player) -> void:
 	if _passed_at < 0.0 and moved and not player.nickname.is_empty():
 		print('Bot saw player "%s" move' % player.nickname)
 		_passed_at = _elapsed
+
+
+## True once every other client with a lower peer id has left. The host of a
+## listen server (peer 1) stays until the end, so it doesn't count.
+func _is_first_in_line() -> bool:
+	for node in get_tree().get_nodes_in_group("players"):
+		var peer_id := (node as Player).get_multiplayer_authority()
+		if peer_id != MultiplayerPeer.TARGET_PEER_SERVER and peer_id < multiplayer.get_unique_id():
+			return false
+	return true
 
 
 func _finish(exit_code: int) -> void:
