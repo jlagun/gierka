@@ -58,6 +58,8 @@ The first time a server starts, macOS or Windows may ask whether Godot can accep
 
 - WASD: move
 - mouse: look around
+- left click: shoot
+- R: reload
 - Space: jump
 - Esc: free the mouse (click to capture it again)
 

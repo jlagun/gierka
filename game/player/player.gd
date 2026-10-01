@@ -19,6 +19,7 @@ var nickname: String = ""
 
 @onready var _head: Node3D = $Head
 @onready var _camera: Camera3D = $Head/Camera3D
+@onready var _weapon: Weapon = $Head/Weapon
 @onready var _body: MeshInstance3D = $Body
 @onready var _visor: MeshInstance3D = $Visor
 @onready var _name_label: Label3D = $NameLabel
@@ -43,9 +44,15 @@ func _ready() -> void:
 func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("ui_cancel"):
 		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
-	elif event is InputEventMouseButton and event.is_pressed():
-		_capture_mouse()
-	elif event is InputEventMouseMotion and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
+	elif Input.mouse_mode != Input.MOUSE_MODE_CAPTURED:
+		# While the mouse is free, a click only takes it back; it doesn't shoot.
+		if event is InputEventMouseButton and event.is_pressed():
+			_capture_mouse()
+	elif event.is_action_pressed("fire"):
+		_weapon.pull_trigger()
+	elif event.is_action_pressed("reload"):
+		_weapon.reload()
+	elif event is InputEventMouseMotion:
 		var motion: InputEventMouseMotion = event
 		rotate_y(-motion.relative.x * mouse_sensitivity)
 		var max_angle := deg_to_rad(max_look_angle_degrees)
