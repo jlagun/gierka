@@ -1,0 +1,80 @@
+# Checks every pull request, and every push to main. A pull request can only
+# be merged when this passes (set in the `main` ruleset, see CLAUDE.md).
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+# A new push to a pull request makes the older run pointless.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  # Keep both in sync with .claude/hooks/session-start.sh, and with CLAUDE.md.
+  GODOT_VERSION: "4.7.2"
+  GODOT_ZIP_SHA512: "9aa00f7a605200940bce3027a567b782f49bd8e940dd06ae9e987bd65aee1b1467edd56ed84fcdcbdd44354bf613bdbb4e5d2913e925850368e150c59ed54c65"
+  GDTOOLKIT_VERSION: "4.5.0"
+
+jobs:
+  checks:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - name: Cache Godot
+        id: godot-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/godot
+          key: godot-${{ env.GODOT_VERSION }}-linux
+
+      - name: Download Godot
+        if: steps.godot-cache.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p ~/godot
+          curl -fsSL -o ~/godot/godot.zip \
+            "https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_linux.x86_64.zip"
+          echo "${GODOT_ZIP_SHA512}  $HOME/godot/godot.zip" | sha512sum --check
+          unzip -q ~/godot/godot.zip -d ~/godot
+          rm ~/godot/godot.zip
+
+      - name: Point GODOT at it
+        run: |
+          chmod +x ~/godot/Godot_v${GODOT_VERSION}-stable_linux.x86_64
+          echo "GODOT=$HOME/godot/Godot_v${GODOT_VERSION}-stable_linux.x86_64" >> "$GITHUB_ENV"
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install gdtoolkit
+        run: pip install "gdtoolkit==${GDTOOLKIT_VERSION}"
+
+      # The add-ons are third-party code, so they are not checked.
+      - name: Check formatting (gdformat)
+        run: git ls-files 'game/*.gd' ':!:game/addons/*' | xargs gdformat --check
+
+      - name: Check style (gdlint)
+        run: git ls-files 'game/*.gd' ':!:game/addons/*' | xargs gdlint
+
+      - name: Import the project
+        run: |
+          "$GODOT" --headless --path game --import
+
+      - name: Unit tests (GUT)
+        run: tools/run_tests.sh
+
+      - name: Warnings
+        run: tools/check_warnings.sh
+
+      - name: Smoke test
+        run: tools/smoke_test.sh
