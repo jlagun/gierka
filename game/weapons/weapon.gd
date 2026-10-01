@@ -52,6 +52,7 @@ var _hit_marker_mesh: SphereMesh = null
 
 
 func _ready() -> void:
+	assert(data != null and aim != null, "A Weapon needs its data and aim set.")
 	ammo = data.magazine_size
 	_rest_position = _view_model.position
 	if data.model != null:
@@ -95,6 +96,8 @@ func _fire() -> void:
 	if is_reloading() or _cooldown_left > 0.0:
 		return
 	if ammo <= 0:
+		# Defensive: the last shot already starts a reload, so this only runs if
+		# something else empties the magazine.
 		reload()
 		return
 	ammo -= 1
