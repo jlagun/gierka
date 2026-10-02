@@ -47,6 +47,7 @@ var _rest_position: Vector3 = Vector3.ZERO
 var _kick_tween: Tween = null
 var _reload_tween: Tween = null
 var _hit_marker_mesh: SphereMesh = null
+var _muzzle: Node3D = null
 
 @onready var _view_model: Node3D = $ViewModel
 
@@ -55,8 +56,13 @@ func _ready() -> void:
 	assert(data != null and aim != null, "A Weapon needs its data and aim set.")
 	ammo = data.magazine_size
 	_rest_position = _view_model.position
+	_muzzle = _view_model
 	if data.model != null:
-		_view_model.add_child(data.model.instantiate())
+		var model := data.model.instantiate()
+		_view_model.add_child(model)
+		var muzzle := model.get_node_or_null(^"Muzzle") as Node3D
+		if muzzle != null:
+			_muzzle = muzzle
 	# Only the player holding the weapon shoots with it.
 	set_physics_process(is_multiplayer_authority())
 
@@ -90,6 +96,12 @@ func reload() -> void:
 
 func is_reloading() -> bool:
 	return _reload_left > 0.0
+
+
+## Where shot effects start: the model's "Muzzle" marker, or the view model if
+## the model has none.
+func get_muzzle() -> Node3D:
+	return _muzzle
 
 
 func _fire() -> void:
