@@ -8,6 +8,7 @@ extends CharacterBody3D
 const HUE_STEP: float = 0.618034
 const BODY_SATURATION: float = 0.55
 const BODY_BRIGHTNESS: float = 0.9
+const HUD_SCENE: PackedScene = preload("res://ui/hud.tscn")
 
 @export var move_speed: float = 5.0
 @export var jump_velocity: float = 4.5
@@ -39,6 +40,7 @@ func _ready() -> void:
 		_visor.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_SHADOWS_ONLY
 		_name_label.visible = false
 		_capture_mouse()
+		_show_hud()
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -84,3 +86,9 @@ func _color_body() -> void:
 	var material := StandardMaterial3D.new()
 	material.albedo_color = Color.from_hsv(hue, BODY_SATURATION, BODY_BRIGHTNESS)
 	_body.material_override = material
+
+
+func _show_hud() -> void:
+	var hud: Hud = HUD_SCENE.instantiate()
+	add_child(hud)
+	hud.follow_weapon(_weapon)
