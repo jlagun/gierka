@@ -6,10 +6,13 @@
 $godot = if ($env:GODOT) { $env:GODOT } else { 'godot' }
 $game = (Resolve-Path (Join-Path (Join-Path $PSScriptRoot '..') 'game')).Path
 
-# A fresh clone has no import cache yet, and the game can't start without it.
-if (-not (Test-Path (Join-Path $game '.godot'))) {
-    & $godot --headless --path $game --import
-}
+# Import every time, not only on a fresh clone. After a branch switch, the old
+# import makes scripts that use new classes fail to load, and the game still
+# starts. With nothing to update it takes a few seconds. Only errors and
+# warnings from the import are shown.
+$importLog = & $godot --headless --path $game --import 2>&1
+$importLog | Select-String -CaseSensitive -Pattern 'SCRIPT ERROR', '^ERROR:', '^WARNING:' |
+    ForEach-Object { Write-Host $_.Line }
 # The quotes around -- keep Windows PowerShell from swallowing it.
 & $godot --path $game '--' @args
 exit $LASTEXITCODE

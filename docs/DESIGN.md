@@ -194,7 +194,7 @@ Open questions:
 
 ## 14. Decision log
 
-D1–D23 were made on 2026-09-29 by both players, and the options you considered are in [archive/OPEN_DECISIONS.md](archive/OPEN_DECISIONS.md). Later decisions say who made them and when. Add new decisions at the bottom as D25, D26, and so on.
+D1–D23 were made on 2026-09-29 by both players, and the options you considered are in [archive/OPEN_DECISIONS.md](archive/OPEN_DECISIONS.md). Later decisions say who made them and when. Add new decisions at the bottom as D27, D28, and so on.
 
 | # | Decision | Choice |
 |---|---|---|
@@ -222,3 +222,4 @@ D1–D23 were made on 2026-09-29 by both players, and the options you considered
 | D22 | Hard "no" list | See section 11. |
 | D23 | Language | English code and docs. English in-game text with Polish flavor, through a translation table. |
 | D24 | Ammo | Weapons have magazines, which reload with R or by themselves when empty. Spare ammo is unlimited, so v0.1 has no ammo pickups. (jlagun, 2026-10-01, in M1.2) |
+| D26 | Sprint | Hold Shift to sprint. It only works while moving forward, so backing away from demons while shooting them happens at walking speed. There is no stamina, and you can shoot while sprinting. (jlagun, 2026-10-02, in M1.1) |
