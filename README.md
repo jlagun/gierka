@@ -7,7 +7,7 @@ Bursa Tales is a co-op first-person shooter for up to 8 players. A mysterious ev
 ## What you need
 
 - **Godot 4.7.2**, the standard build (not .NET), [downloaded directly](https://godotengine.org/download/archive/4.7.2-stable/). Avoid the Steam version: it updates itself, and you both need exactly the same version.
-- **Git LFS:** run `git lfs install` once.
+- **Git LFS,** for binary assets like sounds. On macOS, install it with `brew install git-lfs` (Git for Windows already includes it), then run `git lfs install` once. Without it, a sound arrives as a 130-byte text file that Godot can't load.
 - **Tailscale,** to play together over the internet without port forwarding.
 
 Tell the scripts where Godot is, using the `GODOT` environment variable:
@@ -66,7 +66,7 @@ The first time a server starts, macOS or Windows may ask whether Godot can accep
 
 ## Smoke test
 
-The smoke test starts a dedicated server and two bot clients, without windows. It passes when each bot has seen the other one move, and nothing logged an error or a warning. Run it before you push.
+The smoke test starts a dedicated server and two bot clients, without windows. The bots walk in circles and shoot now and then. The test passes when each bot has seen the other one move, and nothing logged an error or a warning. Run it before you push.
 
 ## Documentation
 

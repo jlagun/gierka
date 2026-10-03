@@ -1,0 +1,23 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://weapons/effects/tracer.gd" id="1_tracer"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_streak"]
+shading_mode = 0
+albedo_color = Color(1, 0.92, 0.6, 1)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_streak"]
+material = SubResource("StandardMaterial3D_streak")
+top_radius = 0.008
+bottom_radius = 0.008
+height = 1.0
+radial_segments = 4
+rings = 0
+
+[node name="Tracer" type="Node3D"]
+script = ExtResource("1_tracer")
+
+[node name="Streak" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 0, 0, -0.5)
+cast_shadow = 0
+mesh = SubResource("CylinderMesh_streak")

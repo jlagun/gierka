@@ -1,8 +1,8 @@
 extends Node
 ## Smoke-test bot, added to a client started with `--bot`. It walks its own
-## player in a circle and watches the other players. It quits with exit code 0
-## once it has seen another player, with a nickname, move; with 1 if that
-## doesn't happen in time.
+## player in a circle, shoots now and then, and watches the other players. It
+## quits with exit code 0 once it has seen another player, with a nickname,
+## move; with 1 if that doesn't happen in time.
 ##
 ## Bots leave one at a time, lowest peer id first. When two clients leave in
 ## the same server frame, the server's notice to one about the other fails,
@@ -13,9 +13,13 @@ const TIMEOUT_SECONDS: float = 30.0
 const LINGER_SECONDS: float = 3.0
 const MIN_DISTANCE: float = 1.0
 const TURN_SPEED: float = 1.5  # radians per second
+## Seconds between shots. Shooting sends the shot effects over the network, so
+## a broken RPC shows up as an error in the logs.
+const SHOT_INTERVAL: float = 1.0
 
 var _elapsed: float = 0.0
 var _passed_at: float = -1.0
+var _next_shot_at: float = SHOT_INTERVAL
 var _first_seen_at: Dictionary[StringName, Vector3] = {}
 
 
@@ -30,6 +34,7 @@ func _physics_process(delta: float) -> void:
 		var player := node as Player
 		if player.is_multiplayer_authority():
 			player.rotate_y(TURN_SPEED * delta)
+			_shoot_now_and_then(player)
 		else:
 			_watch(player)
 
@@ -54,6 +59,13 @@ func _watch(player: Player) -> void:
 	if _passed_at < 0.0 and moved and not player.nickname.is_empty():
 		print('Bot saw player "%s" move' % player.nickname)
 		_passed_at = _elapsed
+
+
+func _shoot_now_and_then(player: Player) -> void:
+	if _elapsed < _next_shot_at:
+		return
+	_next_shot_at = _elapsed + SHOT_INTERVAL
+	(player.get_node("Head/Weapon") as Weapon).pull_trigger()
 
 
 ## True once every other client with a lower peer id has left. The host of a
