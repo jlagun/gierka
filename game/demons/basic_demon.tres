@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="DemonData" format=3]
+
+[ext_resource type="Script" path="res://demons/demon_data.gd" id="1_x8i8x"]
+
+[resource]
+script = ExtResource("1_x8i8x")
+health = 60
+speed = 3.5
+damage = 10
+attack_range = 1.5
+attack_cooldown = 1.0
