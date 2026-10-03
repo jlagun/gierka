@@ -63,6 +63,17 @@ The first time a server starts, macOS or Windows may ask whether Godot can accep
 - Space: jump
 - Esc: free the mouse (click to capture it again)
 
+## Tests and CI
+
+Every pull request runs these checks on GitHub, and you can run them yourself before you push:
+
+- **Unit tests (GUT):** `tools/run_tests.sh`. The tests are in `game/tests/unit`.
+- **Warnings:** `tools/check_warnings.sh` fails if a script has a Godot warning.
+- **Format and style:** `gdformat --check` and `gdlint`, from [gdtoolkit](https://github.com/Scony/godot-gdscript-toolkit) (`pip install gdtoolkit==4.5.0`).
+- **Smoke test:** see below.
+
+The pull request template asks for a "how to test" section. CI must be green before a pull request can be merged.
+
 ## Smoke test
 
 The smoke test starts a dedicated server and two bot clients, without windows. It passes when each bot has seen the other one move, and nothing logged an error or a warning. Run it before you push.
