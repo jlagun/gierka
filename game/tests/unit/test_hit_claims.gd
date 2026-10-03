@@ -1,3 +1,6 @@
+# gdlint: disable=max-public-methods
+# Each test is a public function, so a class with many tests passes the
+# 20-method limit that suits game code.
 extends GutTest
 ## Unit tests for the parts of HitClaims that don't need a network.
 
