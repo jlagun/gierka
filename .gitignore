@@ -7,3 +7,6 @@
 # OS clutter
 .DS_Store
 Thumbs.db
+
+# Written only while tools/check_warnings.sh runs
+/game/override.cfg
