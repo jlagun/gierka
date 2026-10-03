@@ -10,10 +10,21 @@ GODOT="${GODOT:-godot}"
 GAME="$(cd "$(dirname "$0")/../game" && pwd)"
 CHECKER="res://tests/check_warnings.gd"
 
-# The override file only exists for this run, so it never ends up in a commit.
-trap 'rm -f "$GAME/override.cfg"' EXIT
+IMPORT_LOG="$(mktemp)"
 
-"$GODOT" --headless --path "$GAME" --import >/dev/null 2>&1
+# The override file only exists for this run, so it never ends up in a commit.
+trap 'rm -f "$GAME/override.cfg" "$IMPORT_LOG"' EXIT
+
+# The import prints a lot, so its output is only shown when it fails.
+import_project() {
+  if ! "$GODOT" --headless --path "$GAME" --import >"$IMPORT_LOG" 2>&1; then
+    cat "$IMPORT_LOG"
+    echo "The project import failed (output above)."
+    exit 1
+  fi
+}
+
+import_project
 "$GODOT" --headless --path "$GAME" -s "$CHECKER" -- --write-override
-"$GODOT" --headless --path "$GAME" --import >/dev/null 2>&1
+import_project
 "$GODOT" --headless --path "$GAME" -s "$CHECKER"
