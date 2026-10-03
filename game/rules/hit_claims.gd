@@ -15,12 +15,19 @@ signal hit_applied(shooter_id: int, target: Node3D, damage: int)
 const SHOT_BURST: int = 3
 ## Extra reach for latency: the server sees the shooter and the target a little late.
 const RANGE_SLACK_METERS: float = 3.0
+## Seconds between two "Rejected" lines about the same shooter. A client that
+## floods bad claims would otherwise flood the server log too.
+const REJECTION_LOG_INTERVAL: float = 1.0
 
 ## The node the players are spawned under.
 @export var players: Node3D
 
 ## Peer id -> that shooter's fire-rate limit. Only used on the server.
 var _limiters: Dictionary[int, ShotLimiter] = {}
+## Peer id -> when the server last logged a rejected claim from that peer.
+var _last_rejection_logged: Dictionary[int, float] = {}
+## Peer id -> rejections left out of the log since then.
+var _rejections_not_logged: Dictionary[int, int] = {}
 
 
 func _ready() -> void:
@@ -59,20 +66,24 @@ static func is_well_formed(hits: Dictionary) -> bool:
 func process_shot(shooter_id: int, hits: Dictionary) -> void:
 	# A broken claim is dropped whole, before any of its hits does damage.
 	if not is_well_formed(hits):
-		print("Rejected a shot from peer %d: the claim is malformed" % shooter_id)
+		_log_rejection(shooter_id, "the claim is malformed")
 		return
 	var shooter := players.get_node_or_null(str(shooter_id)) as Player
 	if shooter == null:
 		return
 	var weapon_data := shooter.get_weapon().data
 	if not _limiter_for(shooter_id, weapon_data).try_shot(_now_seconds()):
-		print("Rejected a shot from peer %d: it came too soon" % shooter_id)
+		_log_rejection(shooter_id, "it came too soon")
 		return
-	# Shots start at the head, so its height comes from the player scene.
-	var eye := (shooter.get_node(^"Head") as Node3D).global_position
+	# The point the shooter's ray starts from, so the range is measured the same
+	# way the client measured it.
+	var eye := shooter.get_weapon().aim.global_position
 	var pellets_left := weapon_data.pellets
 	for key: String in hits:
 		var pellet_hits: int = hits[key]
+		# A real claim only lists targets that at least one pellet hit.
+		if pellet_hits < 1:
+			continue
 		var target := _find_target(shooter, NodePath(key))
 		if target == null:
 			continue
@@ -80,7 +91,7 @@ func process_shot(shooter_id: int, hits: Dictionary) -> void:
 		if health == null or not health.is_alive():
 			continue
 		if not is_in_range(eye, target.global_position, weapon_data.max_range):
-			print("Rejected a hit from peer %d: %s is out of range" % [shooter_id, target.name])
+			_log_rejection(shooter_id, "%s is out of range" % target.name)
 			continue
 		# A shot can't hit with more pellets than the weapon fires.
 		if pellets_left <= 0:
@@ -93,11 +104,17 @@ func process_shot(shooter_id: int, hits: Dictionary) -> void:
 		hit_applied.emit(shooter_id, target, damage)
 
 
+# The argument is a Variant, not a Dictionary. With a typed argument, Godot
+# rejects a claim of the wrong type before this runs, and logs an error for it.
 @rpc("any_peer", "call_remote", "reliable")
-func _claim_shot(hits: Dictionary) -> void:
+func _claim_shot(hits: Variant) -> void:
 	if not multiplayer.is_server():
 		return
-	process_shot(multiplayer.get_remote_sender_id(), hits)
+	var shooter_id := multiplayer.get_remote_sender_id()
+	if typeof(hits) != TYPE_DICTIONARY:
+		_log_rejection(shooter_id, "the claim is malformed")
+		return
+	process_shot(shooter_id, hits)
 
 
 func _on_player_added(node: Node) -> void:
@@ -109,6 +126,8 @@ func _on_player_added(node: Node) -> void:
 
 func _on_player_unregistered(peer_id: int) -> void:
 	_limiters.erase(peer_id)
+	_last_rejection_logged.erase(peer_id)
+	_rejections_not_logged.erase(peer_id)
 
 
 ## Turns a shot's traces into a claim: target path -> number of pellets that hit it.
@@ -143,6 +162,23 @@ func _limiter_for(peer_id: int, weapon_data: WeaponData) -> ShotLimiter:
 	if not _limiters.has(peer_id):
 		_limiters[peer_id] = ShotLimiter.new(weapon_data.fire_rate, SHOT_BURST, _now_seconds())
 	return _limiters[peer_id]
+
+
+## Logs why a claim was rejected, at most once per REJECTION_LOG_INTERVAL for
+## each shooter. The next line says how many were left out in between.
+func _log_rejection(shooter_id: int, reason: String) -> void:
+	var now := _now_seconds()
+	var last: float = _last_rejection_logged.get(shooter_id, -INF)
+	if now - last < REJECTION_LOG_INTERVAL:
+		_rejections_not_logged[shooter_id] = _rejections_not_logged.get(shooter_id, 0) + 1
+		return
+	var line := "Rejected a shot from peer %d: %s" % [shooter_id, reason]
+	var skipped: int = _rejections_not_logged.get(shooter_id, 0)
+	if skipped > 0:
+		line += " (and %d more rejections since the last line)" % skipped
+	print(line)
+	_last_rejection_logged[shooter_id] = now
+	_rejections_not_logged[shooter_id] = 0
 
 
 func _now_seconds() -> float:
