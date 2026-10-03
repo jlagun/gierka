@@ -42,11 +42,12 @@ Claude Code reads this file at the start of every session, on both machines. Kee
 - **Dedicated server:** the same project, run without a window (`--headless`). After v0.1 it runs as a Linux export in Docker on a VPS.
 - **Playing over the internet during development:** Tailscale. Connect to the host's Tailscale IP, so nobody has to set up port forwarding.
 - **Tests:**
-  - GUT (Godot Unit Test) for unit tests.
+  - GUT (Godot Unit Test) for unit tests. The add-on is in `game/addons/gut` and the tests are in `game/tests/unit`, one `test_*.gd` file per class. Test names say what they check, like `test_clean_nickname_cuts_a_long_name`.
   - A headless smoke test that starts a server and two bot clients.
-  - Both run in CI.
+  - A warnings check, which fails if any script has a Godot warning.
+  - All of them run in CI.
 - **Lint and format:** `gdlint` and `gdformat` from gdtoolkit (Python). If they can't parse newer GDScript syntax, rely on Godot's own warnings and note it in the PR.
-- **CI:** GitHub Actions.
+- **CI:** GitHub Actions, in `.github/workflows/ci.yml`. Every pull request runs `gdformat --check`, `gdlint`, the GUT tests, the warnings check and the smoke test, on Linux with Godot 4.7.2. When you upgrade Godot or gdtoolkit, change the version in `ci.yml` too (and the checksum of the Godot download).
 - **Assets:** CC0 packs (Kenney, Quaternius, Poly Pizza) and Mixamo animations.
   - Every third-party asset is listed in `game/assets/CREDITS.md`.
   - The repository is public, so only commit assets whose license allows sharing them. CC0 is always fine. Check Mixamo's terms before committing Mixamo files.
@@ -92,8 +93,11 @@ Put your Godot executable in the `GODOT` environment variable, or on your `PATH`
 | Game with the main menu | `tools/run_client.sh` | `tools\run_client.ps1` |
 | Dedicated server (UDP 7777) | `tools/run_server.sh` | `tools\run_server.ps1` |
 | Smoke test: a server and two bots | `tools/smoke_test.sh` | `tools\smoke_test.ps1` |
+| Unit tests (GUT) | `tools/run_tests.sh` | see below |
+| Warnings check | `tools/check_warnings.sh` | see below |
 
 - **Running the PowerShell scripts:** Windows blocks scripts by default, so run them as `powershell -ExecutionPolicy Bypass -File tools\smoke_test.ps1`.
+- **Unit tests and the warnings check on Windows:** there are no PowerShell scripts for these, because CI runs them for every pull request. To run the tests yourself, run `& $env:GODOT --headless --path game --import` once, then `& $env:GODOT --headless --path game -s addons/gut/gut_cmdln.gd`. The warnings check needs bash, so use WSL or let CI do it.
 - **Game options** come after `--`: `--server`, `--host`, `--connect <address>`, `--port <port>`, `--name <nickname>`, and `--bot` for the smoke test. For example, `$GODOT --headless --path game -- --server`. In PowerShell, write `& $env:GODOT` and quote the separator as `'--'`, or PowerShell may swallow it.
 - **A fresh clone must be imported once** before the game can start from the command line: `$GODOT --headless --path game --import`. The scripts do this for you, and so does opening the project in the editor.
 - **Several instances from the editor:** use Debug → Customize Run Instances.
@@ -148,6 +152,7 @@ Player movement belongs to both owners, so this section is how their code fits t
 - **`main` always runs, and nobody pushes to it directly.** Every change goes through a pull request. The repository is public, so GitHub can enforce this: `main` requires a pull request with one approval, and passing CI once CI exists (M1.7).
 - **The repository is public, so never commit secrets.** That includes tokens, SSH keys, passwords, Tailscale auth keys and the VPS address. CI secrets go in GitHub Actions secrets.
 - **One issue per task, with one assignee.** Name the branch after the issue: `<github-username>/<issue-number>-<short-slug>`, for example `jlagun/12-shotgun` or `bionosal/7-dedicated-server`. The exception is Claude Code cloud sessions: they work on an auto-named `claude/…` branch, which is fine, because the PR's `Closes #<issue>` links it to the issue.
+- **CI must be green to merge.** The check is called `checks`, and it is required in the `main` ruleset (GitHub → Settings → Rules). A pull request with a warning or a failing test is blocked.
 - **Small PRs, reviewed by the other person, squash-merged.** Each PR becomes one commit on `main`.
 - **Commit messages follow Conventional Commits:**
   - prefixes: `feat:`, `fix:`, `docs:`, `refactor:`, `test:`, `chore:`, `ci:`
@@ -175,7 +180,7 @@ A task is done when all of these are true:
 - **Start from the task:** read the issue, the relevant parts of docs/DESIGN.md and the current milestone in docs/ROADMAP.md.
 - **Stay within the issue's scope.** New ideas go into the issue or the DESIGN.md backlog, not into the code.
 - **Before pushing:**
-  - Run the tests and the headless smoke test (a server plus two clients).
+  - Run the unit tests (`tools/run_tests.sh`), the warnings check (`tools/check_warnings.sh`) and the headless smoke test (a server plus two clients).
   - Fix new warnings.
   - Follow the git workflow above.
 - **In a cloud session you can't open a window, so you can't playtest.** When a task is done, tell the player which branch to check out on their own machine and what to try. The definition of done needs someone to play it.
