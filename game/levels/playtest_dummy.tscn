@@ -1,0 +1,38 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://levels/playtest_dummy.gd" id="1_va6nv"]
+[ext_resource type="PackedScene" path="res://rules/health.tscn" id="2_pckxl"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_6g0j3"]
+radius = 0.4
+height = 1.8
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_nf5nu"]
+albedo_color = Color(0.85, 0.72, 0.4, 1)
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_yx3nv"]
+material = SubResource("StandardMaterial3D_nf5nu")
+radius = 0.4
+height = 1.8
+
+[node name="PlaytestDummy" type="StaticBody3D" unique_id=240869890]
+script = ExtResource("1_va6nv")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=893957612]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
+shape = SubResource("CapsuleShape3D_6g0j3")
+
+[node name="Body" type="MeshInstance3D" parent="." unique_id=454749159]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
+mesh = SubResource("CapsuleMesh_yx3nv")
+
+[node name="HitPoints" type="Label3D" parent="." unique_id=110031095]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.2, 0)
+billboard = 1
+text = "100 / 100"
+font_size = 64
+
+[node name="ReviveTimer" type="Timer" parent="." unique_id=29405428]
+one_shot = true
+
+[node name="Health" parent="." unique_id=1390071612 instance=ExtResource("2_pckxl")]
