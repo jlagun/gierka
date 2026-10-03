@@ -37,6 +37,17 @@ function Show-Logs([string[]]$names = @('server', 'bot_a', 'bot_b')) {
     }
 }
 
+# Without Git LFS, binary assets arrive as small text "pointer" files that
+# Godot can't load, and the import then fails with errors that don't say why.
+$pointers = @(Get-ChildItem -Path (Join-Path $game 'assets') -Recurse -File -ErrorAction SilentlyContinue |
+    Where-Object { $_.Length -lt 1024 -and (Get-Content -Path $_.FullName -TotalCount 1) -eq 'version https://git-lfs.github.com/spec/v1' })
+if ($pointers.Count -gt 0) {
+    Write-Host 'These files are Git LFS pointers, not the real files:'
+    $pointers | ForEach-Object { Write-Host "  $($_.FullName)" }
+    Write-Host 'Run git lfs install and git lfs pull, then try again.'
+    exit 1
+}
+
 Write-Host 'Importing the project...'
 $import = Start-Godot 'import' @('--import')
 $import.WaitForExit()

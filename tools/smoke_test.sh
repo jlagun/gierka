@@ -20,6 +20,16 @@ stop_server() {
 }
 trap stop_server EXIT
 
+# Without Git LFS, binary assets arrive as small text "pointer" files that
+# Godot can't load, and the import then fails with errors that don't say why.
+pointers="$(cd "$GAME" && grep -rlI '^version https://git-lfs.github.com/spec/v1' assets)" || true
+if [ -n "$pointers" ]; then
+  echo "These files are Git LFS pointers, not the real files:"
+  sed 's|^|  game/|' <<<"$pointers"
+  echo "Set up Git LFS (on macOS: brew install git-lfs), run git lfs install and git lfs pull, then try again."
+  exit 1
+fi
+
 echo "Importing the project..."
 if ! "$GODOT" --headless --path "$GAME" --import >"$LOGS/import.log" 2>&1; then
   cat "$LOGS/import.log"
