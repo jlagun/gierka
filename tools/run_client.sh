@@ -8,8 +8,10 @@ set -euo pipefail
 GODOT="${GODOT:-godot}"
 GAME="$(cd "$(dirname "$0")/../game" && pwd)"
 
-# A fresh clone has no import cache yet, and the game can't start without it.
-if [ ! -d "$GAME/.godot" ]; then
-  "$GODOT" --headless --path "$GAME" --import
-fi
+# Import every time, not only on a fresh clone. After a branch switch, the old
+# import makes scripts that use new classes fail to load, and the game still
+# starts. With nothing to update it takes a few seconds. Only errors and
+# warnings from the import are shown.
+import_log="$("$GODOT" --headless --path "$GAME" --import 2>&1 || true)"
+grep -E "SCRIPT ERROR|^ERROR:|^WARNING:" <<<"$import_log" || true
 exec "$GODOT" --path "$GAME" -- "$@"
