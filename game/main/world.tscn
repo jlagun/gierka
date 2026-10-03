@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" path="res://main/world.gd" id="1_world"]
 [ext_resource type="PackedScene" path="res://levels/test_arena.tscn" id="2_arena"]
+[ext_resource type="Script" path="res://rules/hit_claims.gd" id="3_claims"]
 
 [node name="World" type="Node3D"]
 script = ExtResource("1_world")
@@ -12,3 +13,7 @@ script = ExtResource("1_world")
 
 [node name="PlayerSpawner" type="MultiplayerSpawner" parent="."]
 spawn_path = NodePath("../Players")
+
+[node name="HitClaims" type="Node" parent="." node_paths=PackedStringArray("players")]
+script = ExtResource("3_claims")
+players = NodePath("../Players")

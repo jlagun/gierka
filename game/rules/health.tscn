@@ -1,0 +1,14 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://rules/health.gd" id="1_health"]
+
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_health"]
+properties/0/path = NodePath(".:current")
+properties/0/spawn = true
+properties/0/replication_mode = 2
+
+[node name="Health" type="Node"]
+script = ExtResource("1_health")
+
+[node name="Synchronizer" type="MultiplayerSynchronizer" parent="."]
+replication_config = SubResource("SceneReplicationConfig_health")

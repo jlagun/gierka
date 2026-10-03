@@ -142,6 +142,7 @@ Player movement belongs to both owners, so this section is how their code fits t
   1. The shooter's client does the raycast and sends a hit claim to the server over RPC.
   2. The server checks the claim (fire rate, range, whether the target is alive) and applies the damage.
   3. Effects like muzzle flashes and tracers are cosmetic RPCs.
+- **Making something damageable:** put `rules/health.tscn` under the node that can be hurt. The node then joins the group `damageable`, and its `Health` replicates to every client. The server stays the authority for `Health` even under a node a client owns, like a player. Only the server calls `Health.apply_damage()`. The server decides hits in `rules/hit_claims.gd`; the rules are in D25 in DESIGN.md.
 - **Spawning:** only the server spawns networked nodes, and always through a `MultiplayerSpawner`. Node names are unique and deterministic; player nodes are named after their peer id.
 - **RPCs:** declare every RPC explicitly, for example `@rpc("any_peer", "call_remote", "reliable")`. An `any_peer` RPC must check `multiplayer.get_remote_sender_id()` before acting.
 - **The server has no screen.** It loads the same scenes but runs headless. So cameras, input, audio and UI must only run on the client that owns them.
