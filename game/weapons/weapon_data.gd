@@ -18,3 +18,13 @@ extends Resource
 @export_range(0.1, 10.0, 0.1, "or_greater") var reload_time: float = 1.0
 ## What the player holds. Shot effects start at its "Muzzle" marker.
 @export var model: PackedScene
+
+@export_group("Effects")
+## Shown at the muzzle with each shot.
+@export var muzzle_flash: PackedScene
+## Drawn from the muzzle to where each pellet went. Its root needs the Tracer script.
+@export var tracer: PackedScene
+## Shown where a pellet hits something. Its root is a CPUParticles3D.
+@export var impact: PackedScene
+## Played with each shot.
+@export var shot_sound: AudioStream
