@@ -35,3 +35,9 @@ func test_clean_nickname_falls_back_when_only_spaces_and_control_characters() ->
 func test_clean_nickname_does_not_leave_trailing_space_after_cutting() -> void:
 	var kept := "A".repeat(NetScript.MAX_NICKNAME_LENGTH - 1)
 	assert_eq(NetScript.clean_nickname(kept + " B", PEER_ID), kept)
+
+
+func test_clean_nickname_removes_invisible_direction_characters() -> void:
+	# U+202E shows the rest of a name backwards. Godot refuses it as a literal in
+	# source code, so it's built with char().
+	assert_eq(NetScript.clean_nickname(char(0x202E) + "abuK", PEER_ID), "abuK")
