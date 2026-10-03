@@ -55,7 +55,7 @@ Claude Code reads this file at the start of every session, on both machines. Kee
 
 ## Project structure
 
-This is the target layout. M0 created `main/`, `net/`, `player/`, `levels/`, `ui/`, `tests/`, `assets/` and `tools/`, and M1.2 added `weapons/`. The other folders appear with the first task that needs them.
+This is the target layout. M0 created `main/`, `net/`, `player/`, `levels/`, `ui/`, `tests/`, `assets/` and `tools/`, M1.2 added `weapons/`, and M2.1 added `demons/`. The other folders appear with the first task that needs them.
 
 ```
 CLAUDE.md
