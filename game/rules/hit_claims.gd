@@ -15,8 +15,6 @@ signal hit_applied(shooter_id: int, target: Node3D, damage: int)
 const SHOT_BURST: int = 3
 ## Extra reach for latency: the server sees the shooter and the target a little late.
 const RANGE_SLACK_METERS: float = 3.0
-## Where a shot starts, above the player's feet.
-const EYE_HEIGHT: float = 1.6
 
 ## The node the players are spawned under.
 @export var players: Node3D
@@ -47,8 +45,22 @@ static func find_damageable(collider: Node) -> Node3D:
 	return null
 
 
+## True if a claim has the shape a real one has: target paths as text, each
+## with a whole number of pellets. The claim comes from a client, so nothing
+## about its types can be assumed.
+static func is_well_formed(hits: Dictionary) -> bool:
+	for key: Variant in hits:
+		if typeof(key) != TYPE_STRING or typeof(hits[key]) != TYPE_INT:
+			return false
+	return true
+
+
 ## Runs on the server, for a claim from a client (or the host's own player).
 func process_shot(shooter_id: int, hits: Dictionary) -> void:
+	# A broken claim is dropped whole, before any of its hits does damage.
+	if not is_well_formed(hits):
+		print("Rejected a shot from peer %d: the claim is malformed" % shooter_id)
+		return
 	var shooter := players.get_node_or_null(str(shooter_id)) as Player
 	if shooter == null:
 		return
@@ -56,13 +68,11 @@ func process_shot(shooter_id: int, hits: Dictionary) -> void:
 	if not _limiter_for(shooter_id, weapon_data).try_shot(_now_seconds()):
 		print("Rejected a shot from peer %d: it came too soon" % shooter_id)
 		return
-	var eye := shooter.global_position + Vector3.UP * EYE_HEIGHT
+	# Shots start at the head, so its height comes from the player scene.
+	var eye := (shooter.get_node(^"Head") as Node3D).global_position
 	var pellets_left := weapon_data.pellets
-	for key: Variant in hits:
-		var pellet_hits: Variant = hits[key]
-		# The claim comes from a client, so don't assume anything about its types.
-		if typeof(key) != TYPE_STRING or typeof(pellet_hits) != TYPE_INT:
-			return
+	for key: String in hits:
+		var pellet_hits: int = hits[key]
 		var target := _find_target(shooter, NodePath(key))
 		if target == null:
 			continue

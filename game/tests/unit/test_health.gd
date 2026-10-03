@@ -2,6 +2,9 @@ extends GutTest
 ## Unit tests for Health. Outside a network game a node counts as the server, so
 ## these run the server's side.
 
+const HEALTH_SCENE: PackedScene = preload("res://rules/health.tscn")
+const CLIENT_PEER_ID: int = 5
+
 var _owner_node: Node
 var _health: Health
 
@@ -51,3 +54,17 @@ func test_health_changed_reports_the_new_value() -> void:
 	watch_signals(_health)
 	_health.apply_damage(20)
 	assert_signal_emitted_with_parameters(_health, "health_changed", [30, 50])
+
+
+func test_the_server_stays_in_charge_under_a_node_a_client_owns() -> void:
+	# Like a player: the spawn function hands the whole player to its client
+	# before the player enters the tree.
+	var player := Node.new()
+	var health: Health = HEALTH_SCENE.instantiate()
+	player.add_child(health)
+	player.set_multiplayer_authority(CLIENT_PEER_ID)
+	add_child_autofree(player)
+	assert_eq(player.get_multiplayer_authority(), CLIENT_PEER_ID)
+	assert_eq(health.get_multiplayer_authority(), MultiplayerPeer.TARGET_PEER_SERVER)
+	var synchronizer := health.get_node("Synchronizer")
+	assert_eq(synchronizer.get_multiplayer_authority(), MultiplayerPeer.TARGET_PEER_SERVER)

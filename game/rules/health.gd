@@ -1,11 +1,13 @@
 class_name Health
 extends Node
-## Hit points of something the server owns, like a target dummy or a demon.
+## Hit points of something that can be hurt, like a target dummy or a demon.
 ##
 ## Add health.tscn under the thing that can be hurt. Its parent then joins the
 ## "damageable" group, which is how a hit claim finds it. Only the server
 ## changes the hit points. They replicate to every client through the
 ## Synchronizer node, so a player who joins later gets the current value too.
+## The server stays in charge of them even under a node a client owns, like a
+## player.
 
 ## Emitted on every peer whenever the hit points change.
 signal health_changed(current: int, maximum: int)
@@ -24,6 +26,14 @@ var current: int = 0:
 		health_changed.emit(current, max_health)
 		if was_alive and current == 0:
 			died.emit()
+
+
+func _enter_tree() -> void:
+	# A player's client owns the player node, and set_multiplayer_authority()
+	# hands that to every child, this one included. Health belongs to the server
+	# whatever its parent is. Setting it here, before the Synchronizer child
+	# enters the tree, means it never starts out with the wrong authority.
+	set_multiplayer_authority(MultiplayerPeer.TARGET_PEER_SERVER)
 
 
 func _ready() -> void:

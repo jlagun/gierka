@@ -38,3 +38,19 @@ func test_find_damageable_returns_null_for_a_wall() -> void:
 	var wall := StaticBody3D.new()
 	add_child_autofree(wall)
 	assert_null(HitClaims.find_damageable(wall))
+
+
+func test_a_normal_claim_is_well_formed() -> void:
+	assert_true(HitClaims.is_well_formed({"/root/World/Dummy": 1, "/root/World/Other": 2}))
+
+
+func test_an_empty_claim_is_well_formed() -> void:
+	assert_true(HitClaims.is_well_formed({}))
+
+
+func test_a_claim_with_a_key_that_is_not_text_is_malformed() -> void:
+	assert_false(HitClaims.is_well_formed({"/root/World/Dummy": 1, 42: 1}))
+
+
+func test_a_claim_with_a_pellet_count_that_is_not_a_whole_number_is_malformed() -> void:
+	assert_false(HitClaims.is_well_formed({"/root/World/Dummy": 1, "/root/World/Other": 1.5}))
