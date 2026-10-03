@@ -57,6 +57,7 @@ The first time a server starts, macOS or Windows may ask whether Godot can accep
 ## Controls
 
 - WASD: move
+- Shift (hold): sprint, while moving forward
 - mouse: look around
 - left click: shoot
 - R: reload
