@@ -1,0 +1,66 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://demons/demon_preview.gd" id="1_176ac"]
+[ext_resource type="PackedScene" path="res://demons/demon.tscn" id="2_drlyg"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_46mxs"]
+
+[sub_resource type="Sky" id="Sky_ljl1n"]
+sky_material = SubResource("ProceduralSkyMaterial_46mxs")
+
+[sub_resource type="Environment" id="Environment_rb1w5"]
+background_mode = 2
+sky = SubResource("Sky_ljl1n")
+
+[node name="DemonPreview" type="Node3D" unique_id=1058879796]
+script = ExtResource("1_176ac")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=848316063]
+environment = SubResource("Environment_rb1w5")
+
+[node name="Sun" type="DirectionalLight3D" parent="." unique_id=1237635451]
+transform = Transform3D(-0.7840458, -0.38297957, 0.4884658, 0, 0.78695583, 0.6170094, -0.620703, 0.48376364, -0.6170094, 1, 6, -6)
+shadow_enabled = true
+
+[node name="Floor" type="CSGBox3D" parent="." unique_id=538306255]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.75, -0.5, 0)
+size = Vector3(14, 1, 8)
+
+[node name="Camera3D" type="Camera3D" parent="." unique_id=1619907724]
+transform = Transform3D(-1, 0, 0, 0, 0.9863939, 0.164399, 0, 0.164399, -0.9863939, -3.75, 1.6, -4.5)
+current = true
+
+[node name="Move" parent="." unique_id=729481393 instance=ExtResource("2_drlyg")]
+
+[node name="MoveLabel" type="Label3D" parent="." unique_id=1261546136]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.1, 0)
+billboard = 1
+text = "Move"
+font_size = 64
+
+[node name="Attack" parent="." unique_id=249891137 instance=ExtResource("2_drlyg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.5, 0, 0)
+
+[node name="AttackLabel" type="Label3D" parent="." unique_id=2091015769]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.5, 2.1, 0)
+billboard = 1
+text = "Attack"
+font_size = 64
+
+[node name="Hit" parent="." unique_id=1161145475 instance=ExtResource("2_drlyg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 0, 0)
+
+[node name="HitLabel" type="Label3D" parent="." unique_id=19272457]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 2.1, 0)
+billboard = 1
+text = "Hit"
+font_size = 64
+
+[node name="Death" parent="." unique_id=1798533379 instance=ExtResource("2_drlyg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.5, 0, 0)
+
+[node name="DeathLabel" type="Label3D" parent="." unique_id=1085985096]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.5, 2.1, 0)
+billboard = 1
+text = "Death"
+font_size = 64
