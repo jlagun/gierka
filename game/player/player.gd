@@ -49,6 +49,11 @@ func _ready() -> void:
 		_show_hud()
 
 
+## The weapon this player holds.
+func get_weapon() -> Weapon:
+	return get_node("Head/Weapon") as Weapon
+
+
 func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("ui_cancel"):
 		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
