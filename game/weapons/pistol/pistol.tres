@@ -2,6 +2,10 @@
 
 [ext_resource type="Script" path="res://weapons/weapon_data.gd" id="1_data"]
 [ext_resource type="PackedScene" path="res://weapons/pistol/pistol_model.tscn" id="2_model"]
+[ext_resource type="PackedScene" path="res://weapons/effects/muzzle_flash.tscn" id="3_flash"]
+[ext_resource type="PackedScene" path="res://weapons/effects/tracer.tscn" id="4_tracer"]
+[ext_resource type="PackedScene" path="res://weapons/effects/impact.tscn" id="5_impact"]
+[ext_resource type="AudioStream" path="res://assets/audio/pistol_shot.wav" id="6_sound"]
 
 [resource]
 script = ExtResource("1_data")
@@ -13,3 +17,7 @@ pellets = 1
 magazine_size = 12
 reload_time = 1.2
 model = ExtResource("2_model")
+muzzle_flash = ExtResource("3_flash")
+tracer = ExtResource("4_tracer")
+impact = ExtResource("5_impact")
+shot_sound = ExtResource("6_sound")
