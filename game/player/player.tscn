@@ -4,6 +4,19 @@
 [ext_resource type="PackedScene" path="res://weapons/weapon.tscn" id="2_weapon"]
 [ext_resource type="Resource" path="res://weapons/pistol/pistol.tres" id="3_pistol"]
 [ext_resource type="Resource" path="res://player/movement.tres" id="4_movement"]
+[ext_resource type="Script" path="res://audio/sound_bank.gd" id="5_bank"]
+[ext_resource type="AudioStream" path="res://assets/audio/player/hurt_01.mp3" id="6_hurt_01"]
+[ext_resource type="AudioStream" path="res://assets/audio/player/hurt_02.mp3" id="6_hurt_02"]
+[ext_resource type="AudioStream" path="res://assets/audio/player/hurt_03.mp3" id="6_hurt_03"]
+[ext_resource type="AudioStream" path="res://assets/audio/player/hurt_04.mp3" id="6_hurt_04"]
+[ext_resource type="AudioStream" path="res://assets/audio/player/hurt_05.mp3" id="6_hurt_05"]
+[ext_resource type="AudioStream" path="res://assets/audio/player/hurt_06.mp3" id="6_hurt_06"]
+
+[sub_resource type="Resource" id="SoundBank_hurt"]
+resource_name = "player hurt"
+script = ExtResource("5_bank")
+streams = Array[AudioStream]([ExtResource("6_hurt_01"), ExtResource("6_hurt_02"), ExtResource("6_hurt_03"), ExtResource("6_hurt_04"), ExtResource("6_hurt_05"), ExtResource("6_hurt_06")])
+log_choices = true
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_body"]
 radius = 0.4
@@ -30,6 +43,7 @@ properties/1/replication_mode = 1
 [node name="Player" type="CharacterBody3D"]
 script = ExtResource("1_player")
 movement = ExtResource("4_movement")
+hurt_sounds = SubResource("SoundBank_hurt")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)

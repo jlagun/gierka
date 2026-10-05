@@ -1,6 +1,57 @@
 [gd_resource type="Resource" script_class="DemonData" format=3]
 
 [ext_resource type="Script" path="res://demons/demon_data.gd" id="1_x8i8x"]
+[ext_resource type="Script" path="res://audio/sound_bank.gd" id="2_bank"]
+[ext_resource type="AudioStream" path="res://assets/audio/demon/monster_01.ogg" id="s3_monster_01"]
+[ext_resource type="AudioStream" path="res://assets/audio/demon/monster_02.ogg" id="s4_monster_02"]
+[ext_resource type="AudioStream" path="res://assets/audio/demon/monster_03.ogg" id="s5_monster_03"]
+[ext_resource type="AudioStream" path="res://assets/audio/demon/monster_04.ogg" id="s6_monster_04"]
+[ext_resource type="AudioStream" path="res://assets/audio/demon/monster_05.ogg" id="s7_monster_05"]
+[ext_resource type="AudioStream" path="res://assets/audio/demon/monster_06.ogg" id="s8_monster_06"]
+[ext_resource type="AudioStream" path="res://assets/audio/demon/monster_07.ogg" id="s9_monster_07"]
+[ext_resource type="AudioStream" path="res://assets/audio/demon/grunt_01.ogg" id="s10_grunt_01"]
+[ext_resource type="AudioStream" path="res://assets/audio/demon/grunt_02.ogg" id="s11_grunt_02"]
+[ext_resource type="AudioStream" path="res://assets/audio/demon/grunt_03.ogg" id="s12_grunt_03"]
+[ext_resource type="AudioStream" path="res://assets/audio/demon/grunt_04.ogg" id="s13_grunt_04"]
+[ext_resource type="AudioStream" path="res://assets/audio/demon/grunt_05.ogg" id="s14_grunt_05"]
+[ext_resource type="AudioStream" path="res://assets/audio/demon/troll_01.ogg" id="s15_troll_01"]
+[ext_resource type="AudioStream" path="res://assets/audio/demon/troll_02.ogg" id="s16_troll_02"]
+[ext_resource type="AudioStream" path="res://assets/audio/demon/troll_03.ogg" id="s17_troll_03"]
+[ext_resource type="AudioStream" path="res://assets/audio/demon/howl.ogg" id="s18_howl"]
+[ext_resource type="AudioStream" path="res://assets/audio/demon/roar_01.ogg" id="s19_roar_01"]
+[ext_resource type="AudioStream" path="res://assets/audio/demon/roar_02.ogg" id="s20_roar_02"]
+[ext_resource type="AudioStream" path="res://assets/audio/demon/roar_03.ogg" id="s21_roar_03"]
+[ext_resource type="AudioStream" path="res://assets/audio/demon/hurt_01.ogg" id="s22_hurt_01"]
+[ext_resource type="AudioStream" path="res://assets/audio/demon/hurt_02.ogg" id="s23_hurt_02"]
+[ext_resource type="AudioStream" path="res://assets/audio/demon/hurt_03.ogg" id="s24_hurt_03"]
+[ext_resource type="AudioStream" path="res://assets/audio/demon/hurt_04.ogg" id="s25_hurt_04"]
+[ext_resource type="AudioStream" path="res://assets/audio/demon/hurt_05.ogg" id="s26_hurt_05"]
+[ext_resource type="AudioStream" path="res://assets/audio/demon/scream_01.ogg" id="s27_scream_01"]
+[ext_resource type="AudioStream" path="res://assets/audio/demon/scream_02.ogg" id="s28_scream_02"]
+
+[sub_resource type="Resource" id="SoundBank_growl"]
+resource_name = "demon growl"
+script = ExtResource("2_bank")
+streams = Array[AudioStream]([ExtResource("s3_monster_01"), ExtResource("s4_monster_02"), ExtResource("s5_monster_03"), ExtResource("s6_monster_04"), ExtResource("s7_monster_05"), ExtResource("s8_monster_06"), ExtResource("s9_monster_07"), ExtResource("s10_grunt_01"), ExtResource("s11_grunt_02"), ExtResource("s12_grunt_03"), ExtResource("s13_grunt_04"), ExtResource("s14_grunt_05"), ExtResource("s15_troll_01"), ExtResource("s16_troll_02"), ExtResource("s17_troll_03"), ExtResource("s18_howl")])
+log_choices = true
+
+[sub_resource type="Resource" id="SoundBank_attack"]
+resource_name = "demon attack"
+script = ExtResource("2_bank")
+streams = Array[AudioStream]([ExtResource("s19_roar_01"), ExtResource("s20_roar_02"), ExtResource("s21_roar_03"), ExtResource("s4_monster_02"), ExtResource("s7_monster_05"), ExtResource("s17_troll_03")])
+log_choices = true
+
+[sub_resource type="Resource" id="SoundBank_hit"]
+resource_name = "demon hit"
+script = ExtResource("2_bank")
+streams = Array[AudioStream]([ExtResource("s22_hurt_01"), ExtResource("s23_hurt_02"), ExtResource("s24_hurt_03"), ExtResource("s25_hurt_04"), ExtResource("s26_hurt_05")])
+log_choices = true
+
+[sub_resource type="Resource" id="SoundBank_death"]
+resource_name = "demon death"
+script = ExtResource("2_bank")
+streams = Array[AudioStream]([ExtResource("s27_scream_01"), ExtResource("s28_scream_02"), ExtResource("s6_monster_04"), ExtResource("s9_monster_07")])
+log_choices = true
 
 [resource]
 script = ExtResource("1_x8i8x")
@@ -9,3 +60,9 @@ speed = 3.5
 damage = 10
 attack_range = 1.5
 attack_cooldown = 1.0
+growl_sounds = SubResource("SoundBank_growl")
+growl_interval_min = 3.0
+growl_interval_max = 7.0
+attack_sounds = SubResource("SoundBank_attack")
+hit_sounds = SubResource("SoundBank_hit")
+death_sounds = SubResource("SoundBank_death")
