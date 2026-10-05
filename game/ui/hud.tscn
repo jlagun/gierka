@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" path="res://ui/hud.gd" id="1_276te"]
 [ext_resource type="Script" path="res://ui/crosshair.gd" id="2_546lt"]
+[ext_resource type="Script" path="res://ui/hit_marker.gd" id="3_hitmk"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_7ihmi"]
 font_size = 36
@@ -20,6 +21,28 @@ anchor_right = 0.5
 anchor_bottom = 0.5
 mouse_filter = 2
 script = ExtResource("2_546lt")
+
+[node name="HitMarker" type="Control" parent="." unique_id=1730482215]
+layout_mode = 3
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+mouse_filter = 2
+script = ExtResource("3_hitmk")
+
+[node name="Health" type="Label" parent="." unique_id=581936402]
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 24.0
+offset_top = -74.0
+offset_right = 139.0
+offset_bottom = -24.0
+grow_vertical = 0
+text = "100"
+label_settings = SubResource("LabelSettings_7ihmi")
 
 [node name="Ammo" type="Label" parent="." unique_id=1434160370]
 anchors_preset = 3

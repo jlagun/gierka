@@ -142,3 +142,7 @@ func _show_hud() -> void:
 	var hud: Hud = HUD_SCENE.instantiate()
 	add_child(hud)
 	hud.follow_weapon(_weapon)
+	# Without a Health there is nothing to count, so the HUD shows no health.
+	var health := get_node_or_null("Health") as Health
+	if health != null:
+		hud.follow_health(health)
