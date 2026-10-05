@@ -56,7 +56,7 @@ Claude Code reads this file at the start of every session, on both machines. Kee
 
 ## Project structure
 
-This is the target layout. M0 created `main/`, `net/`, `player/`, `levels/`, `ui/`, `tests/`, `assets/` and `tools/`, M1.2 added `weapons/`, and M2.1 added `demons/`. The other folders appear with the first task that needs them.
+This is the target layout. M0 created `main/`, `net/`, `player/`, `levels/`, `ui/`, `tests/`, `assets/` and `tools/`, M1.2 added `weapons/`, M2.1 added `demons/`, and M2.8 added `audio/`. The other folders appear with the first task that needs them.
 
 ```
 CLAUDE.md
@@ -70,6 +70,7 @@ game/                  the Godot project: open game/project.godot
   rules/               game rules on the server: waves, damage, score
   levels/              test arena, the bursa
   ui/                  main menu, HUD, translations
+  audio/               sound code shared by several features (SoundBank)
   assets/              third-party models, textures, audio + CREDITS.md (Git LFS)
   tests/               GUT unit tests, smoke test
   addons/              third-party Godot add-ons (GUT)

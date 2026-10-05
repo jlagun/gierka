@@ -30,6 +30,7 @@ var _time_since_attack: float = INF
 var _playback: AnimationNodeStateMachinePlayback = $AnimationTree.get(&"parameters/playback")
 @onready var _agent: NavigationAgent3D = $NavigationAgent3D
 @onready var _health: Health = $Health
+@onready var _voice: Node3D = $Head
 
 
 func _enter_tree() -> void:
@@ -42,21 +43,27 @@ func _enter_tree() -> void:
 func _ready() -> void:
 	_health.health_changed.connect(_on_health_changed)
 	_health.died.connect(_on_died)
+	_start_growling()
 
 
 ## Plays one attack, then goes back to moving.
 func play_attack() -> void:
-	_play_once(ATTACK)
+	if _play_once(ATTACK):
+		_play_sound(data.attack_sounds)
 
 
 ## Plays a flinch, then goes back to moving.
 func play_hit() -> void:
-	_play_once(HIT)
+	if _play_once(HIT):
+		_play_sound(data.hit_sounds)
 
 
 ## Plays the death, and stays down.
 func play_death() -> void:
+	if _playback.get_current_node() == DEATH:
+		return
 	_playback.travel(DEATH)
+	_play_sound(data.death_sounds)
 
 
 ## The animation state playing now: "move", "attack", "hit" or "death".
@@ -160,14 +167,41 @@ func _on_died() -> void:
 	$CollisionShape3D.set_deferred(&"disabled", true)
 
 
-func _play_once(state: StringName) -> void:
+## Plays a state that goes back to moving. False if the demon is dead, and
+## the state didn't play.
+func _play_once(state: StringName) -> bool:
 	var current := _playback.get_current_node()
 	# A dead demon stays down.
 	if current == DEATH:
-		return
+		return false
 	# travel() doesn't restart the state it's already in, so a second attack
 	# in a row starts over instead.
 	if current == state:
 		_playback.start(state)
 	else:
 		_playback.travel(state)
+	return true
+
+
+## Sounds come from the head, which is where a growl comes from.
+func _play_sound(bank: SoundBank) -> void:
+	if bank != null:
+		bank.play_at(_voice)
+
+
+## Growls now and then, after a random wait each time, until the demon dies.
+func _start_growling() -> void:
+	if data.growl_sounds == null or DisplayServer.get_name() == "headless":
+		return
+	var timer := Timer.new()
+	timer.one_shot = true
+	add_child(timer)
+	timer.timeout.connect(_on_growl_timer_timeout.bind(timer))
+	timer.start(randf_range(data.growl_interval_min, data.growl_interval_max))
+
+
+func _on_growl_timer_timeout(timer: Timer) -> void:
+	if get_animation_state() == DEATH:
+		return
+	_play_sound(data.growl_sounds)
+	timer.start(randf_range(data.growl_interval_min, data.growl_interval_max))

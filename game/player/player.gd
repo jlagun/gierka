@@ -14,6 +14,8 @@ const HUD_SCENE: PackedScene = preload("res://ui/hud.tscn")
 ## Radians of rotation per pixel of mouse movement.
 @export var mouse_sensitivity: float = 0.0025
 @export var max_look_angle_degrees: float = 89.0
+## Played whenever the player loses hit points, for everyone nearby to hear.
+@export var hurt_sounds: SoundBank
 
 var nickname: String = ""
 
@@ -22,6 +24,8 @@ var nickname: String = ""
 var _sprinting: bool = false
 var _time_off_floor: float = INF
 var _time_since_jump_press: float = INF
+# The hit points last seen, so a drop can be told from a heal or a respawn.
+var _last_health: int = 0
 
 @onready var _head: Node3D = $Head
 @onready var _camera: Camera3D = $Head/Camera3D
@@ -36,6 +40,7 @@ func _ready() -> void:
 	add_to_group("players")
 	_name_label.text = nickname
 	_color_body()
+	_listen_for_hurt()
 	var is_local := is_multiplayer_authority()
 	set_physics_process(is_local)
 	set_process_unhandled_input(is_local)
@@ -129,6 +134,22 @@ func _capture_mouse() -> void:
 	# A headless client, like the smoke-test bot, has no mouse to capture.
 	if DisplayServer.get_name() != "headless":
 		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+
+
+## Every peer hears a player get hurt, so each one listens to the Health that
+## the server replicates to it. Without a Health, a player never gets hurt.
+func _listen_for_hurt() -> void:
+	var health := get_node_or_null("Health") as Health
+	if health == null:
+		return
+	_last_health = health.current
+	health.health_changed.connect(_on_health_changed)
+
+
+func _on_health_changed(current: int, _maximum: int) -> void:
+	if current < _last_health and hurt_sounds != null:
+		hurt_sounds.play_at(_head)
+	_last_health = current
 
 
 func _color_body() -> void:
