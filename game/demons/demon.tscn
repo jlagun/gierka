@@ -3,6 +3,7 @@
 [ext_resource type="Script" path="res://demons/demon.gd" id="1_20q1d"]
 [ext_resource type="Resource" path="res://demons/basic_demon.tres" id="2_ludme"]
 [ext_resource type="PackedScene" path="res://assets/models/dragon.fbx" id="3_mgm63"]
+[ext_resource type="PackedScene" path="res://rules/health.tscn" id="4_health"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_ev6w8"]
 radius = 0.35
@@ -100,3 +101,12 @@ remote_path = NodePath("../../Model/EyeArmature")
 [node name="AnimationTree" type="AnimationTree" parent="." unique_id=1927802772]
 tree_root = SubResource("AnimationNodeStateMachine_gi6cx")
 anim_player = NodePath("../Model/AnimationPlayer")
+
+[node name="NavigationAgent3D" type="NavigationAgent3D" parent="." unique_id=1384920577]
+path_desired_distance = 0.5
+path_height_offset = 0.5
+target_desired_distance = 0.5
+radius = 0.35
+height = 1.6
+
+[node name="Health" parent="." unique_id=902114683 instance=ExtResource("4_health")]
