@@ -1,5 +1,9 @@
 [gd_scene format=3]
 
+[ext_resource type="NavigationMesh" path="res://levels/test_arena_navmesh.tres" id="1_navmesh"]
+[ext_resource type="Script" path="res://levels/demo_demons.gd" id="2_demo"]
+[ext_resource type="PackedScene" path="res://demons/demon.tscn" id="3_demon"]
+
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_hell"]
 sky_top_color = Color(0.3, 0.03, 0.06, 1)
 sky_horizon_color = Color(0.85, 0.32, 0.12, 1)
@@ -32,65 +36,80 @@ transform = Transform3D(0.81915206, 0.46984634, -0.32898995, 0, 0.57357645, 0.81
 light_color = Color(1, 0.86, 0.76, 1)
 shadow_enabled = true
 
-[node name="Floor" type="CSGBox3D" parent="."]
+[node name="NavigationRegion3D" type="NavigationRegion3D" parent="."]
+navigation_mesh = ExtResource("1_navmesh")
+
+[node name="Floor" type="CSGBox3D" parent="NavigationRegion3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
 use_collision = true
 size = Vector3(40, 1, 40)
 material = SubResource("StandardMaterial3D_floor")
 
-[node name="WallNorth" type="CSGBox3D" parent="."]
+[node name="WallNorth" type="CSGBox3D" parent="NavigationRegion3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, -20.5)
 use_collision = true
 size = Vector3(42, 3, 1)
 material = SubResource("StandardMaterial3D_wall")
 
-[node name="WallSouth" type="CSGBox3D" parent="."]
+[node name="WallSouth" type="CSGBox3D" parent="NavigationRegion3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 20.5)
 use_collision = true
 size = Vector3(42, 3, 1)
 material = SubResource("StandardMaterial3D_wall")
 
-[node name="WallEast" type="CSGBox3D" parent="."]
+[node name="WallEast" type="CSGBox3D" parent="NavigationRegion3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20.5, 1.5, 0)
 use_collision = true
 size = Vector3(1, 3, 40)
 material = SubResource("StandardMaterial3D_wall")
 
-[node name="WallWest" type="CSGBox3D" parent="."]
+[node name="WallWest" type="CSGBox3D" parent="NavigationRegion3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20.5, 1.5, 0)
 use_collision = true
 size = Vector3(1, 3, 40)
 material = SubResource("StandardMaterial3D_wall")
 
-[node name="Crate" type="CSGBox3D" parent="."]
+[node name="Crate" type="CSGBox3D" parent="NavigationRegion3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 0.5, -5)
 use_collision = true
 size = Vector3(2, 1, 2)
 material = SubResource("StandardMaterial3D_box")
 
-[node name="Block" type="CSGBox3D" parent="."]
+[node name="Block" type="CSGBox3D" parent="NavigationRegion3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7, 1, -3)
 use_collision = true
 size = Vector3(3, 2, 3)
 material = SubResource("StandardMaterial3D_box")
 
-[node name="Bench" type="CSGBox3D" parent="."]
+[node name="Bench" type="CSGBox3D" parent="NavigationRegion3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 0.75, 7)
 use_collision = true
 size = Vector3(4, 1.5, 1.5)
 material = SubResource("StandardMaterial3D_box")
 
-[node name="Step" type="CSGBox3D" parent="."]
+[node name="Step" type="CSGBox3D" parent="NavigationRegion3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 0.25, 8)
 use_collision = true
 size = Vector3(2, 0.5, 2)
 material = SubResource("StandardMaterial3D_box")
 
-[node name="Pillar" type="CSGBox3D" parent="."]
+[node name="Pillar" type="CSGBox3D" parent="NavigationRegion3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, -10)
 use_collision = true
 size = Vector3(1.5, 4, 1.5)
 material = SubResource("StandardMaterial3D_wall")
+
+[node name="DemoDemons" type="Node3D" parent="."]
+script = ExtResource("2_demo")
+
+[node name="Demon1" parent="DemoDemons" instance=ExtResource("3_demon")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15, 0, -15)
+
+[node name="Demon2" parent="DemoDemons" instance=ExtResource("3_demon")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15, 0, -15)
+
+[node name="Demon3" parent="DemoDemons" instance=ExtResource("3_demon")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 16)
 
 [node name="SpawnPoints" type="Node3D" parent="."]
 
