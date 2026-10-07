@@ -27,4 +27,4 @@ extends Resource
 ## Shown where a pellet hits something. Its root is a CPUParticles3D.
 @export var impact: PackedScene
 ## Played with each shot.
-@export var shot_sound: AudioStream
+@export var shot_sound: SoundBank

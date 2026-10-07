@@ -10,9 +10,6 @@ extends Node
 ## Tracers and sparks are added under this node. It isn't a Node3D, so their
 ## positions are world positions.
 
-## How far the shot sound's pitch varies, so repeated shots don't all sound
-## the same. 0.05 is up to 5% higher or lower.
-@export_range(0.0, 0.5, 0.01) var pitch_variation: float = 0.05
 ## The node the players are spawned under.
 @export var players: Node
 
@@ -66,7 +63,7 @@ func _show(weapon: Weapon, ends: PackedVector3Array, normals: PackedVector3Array
 	if data.muzzle_flash != null:
 		muzzle.add_child(data.muzzle_flash.instantiate())
 	if data.shot_sound != null:
-		_play_sound(data.shot_sound, muzzle)
+		data.shot_sound.play_at(muzzle)
 	for i in ends.size():
 		if data.tracer != null:
 			var tracer: Tracer = data.tracer.instantiate()
@@ -78,13 +75,3 @@ func _show(weapon: Weapon, ends: PackedVector3Array, normals: PackedVector3Array
 			impact.position = ends[i]
 			impact.direction = normals[i]
 			add_child(impact)
-
-
-func _play_sound(stream: AudioStream, at: Node3D) -> void:
-	# One player per shot, so a new shot doesn't cut off the last one's tail.
-	var sound := AudioStreamPlayer3D.new()
-	sound.stream = stream
-	sound.pitch_scale = 1.0 + randf_range(-pitch_variation, pitch_variation)
-	sound.finished.connect(sound.queue_free)
-	at.add_child(sound)
-	sound.play()
