@@ -65,6 +65,15 @@ func _ready() -> void:
 			_muzzle = muzzle
 	# Only the player holding the weapon shoots with it.
 	set_physics_process(is_multiplayer_authority())
+	# While shot sounds are being tried out, every pistol on this machine plays
+	# the same one, starting from a random one. See SoundBank.
+	if (
+		is_multiplayer_authority()
+		and data.shot_sound != null
+		and data.shot_sound.streams.size() > 1
+		and not data.shot_sound.is_selecting()
+	):
+		data.shot_sound.select_random()
 
 
 func _physics_process(delta: float) -> void:
@@ -100,6 +109,13 @@ func is_reloading() -> bool:
 
 ## Where shot effects start: the model's "Muzzle" marker, or the view model if
 ## the model has none.
+## Every weapon like this one, on this machine, plays the next of its shot
+## sounds from now on.
+func select_next_shot_sound() -> void:
+	if data.shot_sound != null and data.shot_sound.streams.size() > 1:
+		data.shot_sound.select_next()
+
+
 func get_muzzle() -> Node3D:
 	return _muzzle
 

@@ -62,6 +62,8 @@ func get_weapon() -> Weapon:
 func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("ui_cancel"):
 		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+	elif event.is_action_pressed("next_shot_sound"):
+		_weapon.select_next_shot_sound()
 	elif Input.mouse_mode != Input.MOUSE_MODE_CAPTURED:
 		# While the mouse is free, a click only takes it back; it doesn't shoot.
 		if event is InputEventMouseButton and event.is_pressed():

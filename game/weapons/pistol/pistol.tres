@@ -6,6 +6,18 @@
 [ext_resource type="PackedScene" path="res://weapons/effects/tracer.tscn" id="4_tracer"]
 [ext_resource type="PackedScene" path="res://weapons/effects/impact.tscn" id="5_impact"]
 [ext_resource type="AudioStream" path="res://assets/audio/pistol_shot.wav" id="6_sound"]
+[ext_resource type="Script" path="res://audio/sound_bank.gd" id="7_bank"]
+[ext_resource type="AudioStream" path="res://assets/audio/pistol/bersa.wav" id="8_bersa"]
+[ext_resource type="AudioStream" path="res://assets/audio/pistol/ruger_mark_iii.wav" id="8_ruger_mark_iii"]
+[ext_resource type="AudioStream" path="res://assets/audio/pistol/ruger_single_six.wav" id="8_ruger_single_six"]
+[ext_resource type="AudioStream" path="res://assets/audio/pistol/smith_wesson_642.wav" id="8_smith_wesson_642"]
+[ext_resource type="AudioStream" path="res://assets/audio/pistol/walther_ppq.wav" id="8_walther_ppq"]
+
+[sub_resource type="Resource" id="SoundBank_shot"]
+resource_name = "pistol shot"
+script = ExtResource("7_bank")
+streams = Array[AudioStream]([ExtResource("6_sound"), ExtResource("8_bersa"), ExtResource("8_ruger_mark_iii"), ExtResource("8_ruger_single_six"), ExtResource("8_smith_wesson_642"), ExtResource("8_walther_ppq")])
+pitch_variation = 0.05
 
 [resource]
 script = ExtResource("1_data")
@@ -20,4 +32,4 @@ model = ExtResource("2_model")
 muzzle_flash = ExtResource("3_flash")
 tracer = ExtResource("4_tracer")
 impact = ExtResource("5_impact")
-shot_sound = ExtResource("6_sound")
+shot_sound = SubResource("SoundBank_shot")
